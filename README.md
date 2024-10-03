@@ -21,4 +21,4 @@ This repository holds the functions and protocol to run an experiment based on t
 - Communication functions with sparrow app
 - Functions for computation evaluating criteria
 - Masseges to email user
-- 
+  
