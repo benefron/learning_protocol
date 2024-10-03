@@ -12,11 +12,6 @@ def main():
     parameters = experiment_gui.get_parameters()
     experiment_gui.log_message(f"Initial Parameters: {parameters}")
 
-
-
-    # Example of logging a message from another function
-    experiment_gui.log_message("This is a test message from main.py")
-
     # Start the Tkinter main loop to display the GUI
     root.mainloop()
 

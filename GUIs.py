@@ -86,21 +86,30 @@ class ExperimentGUI:
 
         self.quit_button = tk.Button(self.root, text="Quit", command=self.root.quit)
         self.quit_button.pack()
+        
 
     def start_experiment(self):
-        self.running = True
-        self.start_button.config(state='disabled')
-        self.load_path_button.config(state='disabled')
-        self.disable_inputs()
-        self.log_message(f"Starting experiment on well {self.well_number.get()}")
-        threading.Thread(target=self.update_clock).start()
+        if self.path.get():
+            self.running = True
+            self.start_button.config(state='disabled')
+            self.load_path_button.config(state='disabled')
+            self.quit_button.config(state='disabled')
+            self.disable_inputs()
+            self.experiment_type_menu.config(state='disabled')
+            self.log_message(f"Starting experiment on well {self.well_number.get()}")
+            parameters = self.get_parameters()
+            self.log_message(f"Experiment Parameters: {parameters}")
+            threading.Thread(target=self.update_clock).start()
+        else:
+            messagebox.showwarning("Warning", "Please load a path before starting the experiment.")
 
-    def stop_experiment(self):
+    def stop_experiment(self):  
         self.running = False
         self.start_button.config(state='normal')
         self.load_path_button.config(state='normal')
         self.enable_inputs()
         self.log_message("Experiment stopped")
+        self.quit_button.config(state='normal')
 
         # Save the log when stopping the experiment
         self.save_log()
