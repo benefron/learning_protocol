@@ -63,8 +63,12 @@ class ExperimentGUI:
         tk.Entry(self.root, textvariable=self.target_electrode).pack()  # Entry for new field
 
         tk.Label(self.root, text="Experiment Type:").pack()
-        tk.Radiobutton(self.root, text="Experiment", variable=self.experiment_type, value="Experiment").pack()
-        tk.Radiobutton(self.root, text="Control", variable=self.experiment_type, value="Control").pack()
+        experiment_types = ["Experiment", "Control"]  # List of options for the drop-down menu
+        self.experiment_type_menu = tk.OptionMenu(self.root, self.experiment_type, *experiment_types)
+        self.experiment_type_menu.pack()
+
+
+        
 
         tk.Label(self.root, text="Path:").pack()
         self.path_label = tk.Label(self.root, textvariable=self.path)
