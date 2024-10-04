@@ -22,6 +22,4 @@ def vector_to_matrix(vector, rows=300, cols=1000):
 vector = insert_peaks()
 matrix = vector_to_matrix(vector)
 
-# Export the matrix to a CSV file
-df = pd.DataFrame(matrix)
-df.to_csv('/Users/benefron/Documents/learning_protocol/matrix.csv', index=False)
+

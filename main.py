@@ -1,5 +1,6 @@
 import tkinter as tk
 from GUIs import ExperimentGUI  # Import your ExperimentGUI class from the file where it is defined
+from SimulatedTrace import generate_random_vector, insert_peaks
 
 def main():
     # Create the root window
@@ -14,6 +15,7 @@ def main():
 
     # Start the Tkinter main loop to display the GUI
     root.mainloop()
+    
 
 if __name__ == "__main__":
     main()
