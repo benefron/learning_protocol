@@ -4,6 +4,7 @@ import threading
 import time
 import queue
 import os
+from Experimnt_control import generate_random_number_after_delay
 
 class ExperimentGUI:
     def __init__(self, root, chip_number, chosen_electorde):
@@ -155,6 +156,7 @@ class ExperimentGUI:
             parameters = self.get_parameters()
             self.log_message(f"Experiment Parameters: {parameters}")
             threading.Thread(target=self.update_clock).start()
+            threading.Thread(target=self.run_experiment(1)).start()
         else:
             messagebox.showwarning("Warning", "Please load a streaming path before starting the experiment.")
 
@@ -197,6 +199,21 @@ class ExperimentGUI:
             self.clock_label.config(text=time.strftime("Elapsed Time: %H:%M:%S", time.gmtime(elapsed_time)))
             time.sleep(1)
 
+    # Define here the main protocol running the experiemnt
+    def run_experiment(self,k):
+        while self.running:
+            self.log_message("Running experiment step")
+            time.sleep(10)
+            if k == 1:
+                k = 0
+                random_number = generate_random_number_after_delay()
+                self.electorde_label.config(text=f"Target Elctrode: {random_number}")
+                self.target_electrode = random_number
+                self.log_message(f"Target electrode updated to: {random_number}")
+                self.save_parameters()
+
+
+
     def log_message(self, message):
         """Log a message to the message area in a thread-safe manner."""
         self.log_queue.put(message)
@@ -210,10 +227,6 @@ class ExperimentGUI:
             self.message_area.config(state='disabled')
         self.root.after(100, self.process_log_queue)
 
-    def update_target_electrode(self, electrode):
-        """Update the target electrode field."""
-        self.target_electrode.set(electrode)
-        self.log_message(f"Target electrode updated to: {electrode}")
 
     def get_parameters(self):
         """Return the current parameters as a dictionary."""
@@ -225,8 +238,30 @@ class ExperimentGUI:
             "simulating_electrode": self.simulating_electrode.get(),
             "target_electrode": self.target_electrode.get(),
             "experiment_type": self.experiment_type.get(),
-            "path": self.path.get(),
+            "streaming path": self.exp_path_streaming.get(),
+            "storage path": self.exp_path_storage.get(),
+            "chip number": self.chip_number,
+
         }
+    
+    def dest_status(self):
+        return self.running.get()
+    
+    def save_parameters(self):
+        """Save the current parameters to a exp_parameters.txt file in the specified storage path."""
+        if self.exp_path_storage.get():
+            parameters = self.get_parameters()
+            parameters_file_path = os.path.join(self.exp_path_storage.get(), "exp_parameters.txt")
+
+            try:
+                with open(parameters_file_path, 'w') as parameters_file:
+                    for key, value in parameters.items():
+                        parameters_file.write(f"{key}: {value}\n")
+                self.log_message(f"Parameters saved successfully at {parameters_file_path}")
+            except Exception as e:
+                self.log_message(f"Failed to save parameters: {e}")
+        else:
+            self.log_message("No storage path specified. Please load a path to save the parameters.")
 
     def save_log(self):
         """Save the contents of the message area to a log.txt file in the specified path."""

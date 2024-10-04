@@ -1,8 +1,8 @@
 import tkinter as tk
 from GUIs import ExperimentGUI  # Import your ExperimentGUI class from the file where it is defined
 from SimulatedTrace import generate_random_vector, insert_peaks
-from Experimnt_control import generate_random_number_after_delay
-import time
+#from Experimnt_control import generate_random_number_after_delay
+#import time
 
 def main():
     # Retrive chip number from sparrow
@@ -19,8 +19,8 @@ def main():
     # Use the `get_parameters` method to retrieve parameters in other parts of your code
     parameters = experiment_gui.get_parameters()
     experiment_gui.log_message(f"Initial Parameters: {parameters}")
-  
 
+  
     # Start the Tkinter main loop to display the GUI
     root.mainloop()
     
