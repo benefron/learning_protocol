@@ -6,9 +6,11 @@ import queue
 import os
 
 class ExperimentGUI:
-    def __init__(self, root):
+    def __init__(self, root, chip_number, chosen_electorde):
         self.root = root
         self.root.title("Experiment GUI")
+        self.chip_number = chip_number
+        self.chosen_electrode = chosen_electorde
 
         # Configure grid layout for the root window
         self.root.columnconfigure(0, weight=1)  # Left frame column
@@ -45,11 +47,18 @@ class ExperimentGUI:
         # Create buttons
         self.create_buttons()
 
+        #create a chip number label
+        self.chip_number_label = tk.Label(self.right_frame, text=f"Chip Number: {self.chip_number}")
+        self.chip_number_label.pack(anchor='w')
+        self.electorde_label = tk.Label(self.right_frame, text=f"Target Elctrode: {self.chosen_electrode}")
+        self.electorde_label.pack(anchor='w')
+
         # Create clock label
         #self.clock_header = tk.Label(self.right_frame, text="Elapsed Time:")
         #self.clock_header.pack(pady=10)
         self.clock_label = tk.Label(self.right_frame, text="Elapsed Time: 00:00:00")
         self.clock_label.pack(pady=10)
+        self.clock_label.pack(anchor='w')
 
         # Create message area
         self.message_area = tk.Text(self.bottom_frame, height=10, state='disabled')
@@ -82,8 +91,6 @@ class ExperimentGUI:
         tk.Label(self.left_frame, text="Simulating Electrode:").pack(anchor='w')
         tk.Entry(self.left_frame, textvariable=self.simulating_electrode, width=10).pack(anchor='w')
 
-        tk.Label(self.left_frame, text="Target Electrode:").pack(anchor='w')  # Label for new field
-        tk.Entry(self.left_frame, textvariable=self.target_electrode, width=10).pack(anchor='w')  # Entry for new field
 
         tk.Label(self.left_frame, text="Experiment Type:").pack(anchor='w')
         experiment_types = ["Experiment", "Control"]  # List of options for the drop-down menu
@@ -122,7 +129,7 @@ class ExperimentGUI:
             return
         if self.path.get():
             self.running = True
-            prefix = "SP101"  # You can change this prefix later
+            prefix = self.chip_number  # You can change this prefix later
             today_date = time.strftime("%d%m%Y")
             well_number = self.well_number.get()
             dir_name = f"{prefix}_{today_date}_well{well_number}"
