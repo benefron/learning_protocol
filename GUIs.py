@@ -70,6 +70,7 @@ class ExperimentGUI:
 
         # Variable to control the clock
         self.running = False
+        self.experiment_thread = None
 
         # Start a separate thread to handle GUI message logging
         self.root.after(100, self.process_log_queue)
@@ -155,8 +156,12 @@ class ExperimentGUI:
             self.log_message(f"Starting experiment on well {self.well_number.get()}")
             parameters = self.get_parameters()
             self.log_message(f"Experiment Parameters: {parameters}")
+            self.experiment_thread = threading.Thread(target=self.run_experiment)
+            self.experiment_thread.start()
+            # Start the clock in a separate thread
             threading.Thread(target=self.update_clock).start()
-            threading.Thread(target=self.run_experiment(1)).start()
+            self.experiment_thread = threading.Thread(target=self.run_experiment)
+            self.experiment_thread.start()
         else:
             messagebox.showwarning("Warning", "Please load a streaming path before starting the experiment.")
 
@@ -171,6 +176,9 @@ class ExperimentGUI:
 
         # Save the log when stopping the experiment
         self.save_log()
+        if self.experiment_thread is not None:
+            self.experiment_thread.join()  # Ensure the thread has completed
+
 
     def load_path(self):
         path = filedialog.askdirectory()
@@ -200,17 +208,23 @@ class ExperimentGUI:
             time.sleep(1)
 
     # Define here the main protocol running the experiemnt
-    def run_experiment(self,k):
+    def run_experiment(self):
+        k = 1
         while self.running:
             self.log_message("Running experiment step")
-            time.sleep(10)
             if k == 1:
                 k = 0
                 random_number = generate_random_number_after_delay()
                 self.electorde_label.config(text=f"Target Elctrode: {random_number}")
-                self.target_electrode = random_number
+                self.target_electrode.set(random_number)
                 self.log_message(f"Target electrode updated to: {random_number}")
                 self.save_parameters()
+            time.sleep(2)  # Adjust the sleep time as needed
+        self.log_message("Running experiment step")
+        self.log_message("Experiment stopped due to self.running being set to False")
+        
+        #time.sleep(10)
+
 
 
 
