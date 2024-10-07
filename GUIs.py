@@ -4,7 +4,7 @@ import threading
 import time
 import queue
 import os
-from Experimnt_control import generate_random_number_after_delay
+import Experimnt_control as ec
 
 class ExperimentGUI:
     def __init__(self, root, chip_number, chosen_electorde):
@@ -68,7 +68,8 @@ class ExperimentGUI:
         # Queue for thread-safe logging
         self.log_queue = queue.Queue()
 
-        # Variable to control the clock
+        # Variable to control experiment run and clock update
+        self.stop_event = threading.Event()
         self.running = False
         self.experiment_thread = None
 
@@ -130,6 +131,7 @@ class ExperimentGUI:
             messagebox.showwarning("Warning", "Please load a storage path before starting the experiment.")
             return
         if self.path.get():
+            self.stop_button.clear()
             self.running = True
             prefix = self.chip_number  # You can change this prefix later
             today_date = time.strftime("%d%m%Y")
@@ -165,8 +167,12 @@ class ExperimentGUI:
         else:
             messagebox.showwarning("Warning", "Please load a streaming path before starting the experiment.")
 
-    def stop_experiment(self):  
+    def stop_experiment(self): 
+        self.stop_event.set() 
         self.running = False
+        
+        if self.experiment_thread is not None:
+            self.experiment_thread.join()  # Ensure the thread has completed
         self.start_button.config(state='normal')
         self.load_path_button.config(state='normal')
         self.load_path_button_storage.config(state='normal')
@@ -176,8 +182,7 @@ class ExperimentGUI:
 
         # Save the log when stopping the experiment
         self.save_log()
-        if self.experiment_thread is not None:
-            self.experiment_thread.join()  # Ensure the thread has completed
+        
 
 
     def load_path(self):
@@ -209,19 +214,36 @@ class ExperimentGUI:
 
     # Define here the main protocol running the experiemnt
     def run_experiment(self):
-        k = 1
-        while self.running:
-            self.log_message("Running experiment step")
-            if k == 1:
-                k = 0
-                random_number = generate_random_number_after_delay()
-                self.electorde_label.config(text=f"Target Elctrode: {random_number}")
-                self.target_electrode.set(random_number)
-                self.log_message(f"Target electrode updated to: {random_number}")
-                self.save_parameters()
-            time.sleep(2)  # Adjust the sleep time as needed
-        self.log_message("Running experiment step")
-        self.log_message("Experiment stopped due to self.running being set to False")
+        
+        time.sleep(1)
+        while not self.stop_event.is_set():
+            # run baseline function
+            self.log_message("Running baseline recording")
+            message = ec.run_baseline(self)
+            self.log_message(message)
+            
+            # check if experiment was stopped
+            if self.stop_event.is_set():
+                break
+            
+            # Run stimulation protocol to choose target electrode below R/S criterion
+            self.log_message("Determining target electrode")
+            target_electrode, message = ec.run_stimulation(self)
+            self.electorde_label.config(text=f"Target Elctrode: {target_electrode}")
+            self.target_electrode.set(target_electrode)
+            self.log_message(message)
+            
+            #check if experiment was stopped
+            if self.stop_event.is_set():
+                break
+            
+            # save file with parameters of experiment
+            self.save_parameters()
+            time.sleep(5) 
+            self.log_message("Experiment completed")
+            self.stop_experiment()
+            time.sleep(10)
+        self.log_message("Experiment stopped")
         
         #time.sleep(10)
 
