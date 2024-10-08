@@ -22,4 +22,4 @@ This repository holds the functions and protocol to run an experiment based on t
 - Functions for computation evaluating criteria
 - Masseges to email user
   
-  # **Started simulating a running of the experiment, currently just creating traces, need to work on the calculation of threshold for spike detection and than on running the protocol and starting a general clock to run the experiment automation properly**
+
