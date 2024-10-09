@@ -111,7 +111,7 @@ class ExperimentGUI:
         self.load_path_button.pack(pady=5)
 
         self.load_path_button_storage = tk.Button(self.right_frame, text="Load Storage Path", command=self.load_path_storage)
-        self.load_path_button_storage .pack(pady=5)
+        self.load_path_button_storage.pack(pady=5)
 
         self.quit_button = tk.Button(self.right_frame, text="Quit", command=self.root.quit)
         self.quit_button.pack(pady=5)
@@ -131,7 +131,7 @@ class ExperimentGUI:
             messagebox.showwarning("Warning", "Please load a storage path before starting the experiment.")
             return
         if self.path.get():
-            self.stop_button.clear()
+            self.stop_button.config(state='normal')
             self.running = True
             prefix = self.chip_number  # You can change this prefix later
             today_date = time.strftime("%d%m%Y")
@@ -158,6 +158,11 @@ class ExperimentGUI:
             self.log_message(f"Starting experiment on well {self.well_number.get()}")
             parameters = self.get_parameters()
             self.log_message(f"Experiment Parameters: {parameters}")
+            # pop up window to ask user to "Please make sure that the defult path in SparrowApp is set to the streaming path: {exp_path_streaming} and ask for confirmation to start the experiment"
+            messagebox.showinfo("Information", f"Please make sure that the defult path in SparrowApp is set to the streaming path: {exp_path_streaming} and press OK to start the experiment")
+            
+            # Start the experiment in a separate thread
+            
             self.experiment_thread = threading.Thread(target=self.run_experiment)
             self.experiment_thread.start()
             # Start the clock in a separate thread

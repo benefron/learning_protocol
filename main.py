@@ -20,7 +20,6 @@ def main():
     parameters = experiment_gui.get_parameters()
     experiment_gui.log_message(f"Initial Parameters: {parameters}")
 
-  
     # Start the Tkinter main loop to display the GUI
     root.mainloop()
     

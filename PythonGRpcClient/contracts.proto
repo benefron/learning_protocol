@@ -1,0 +1,401 @@
+syntax = "proto3";
+
+option csharp_namespace = "SparrowRpcService";
+
+message File{
+    string filename = 1;
+}
+
+message ChipID{
+    string chipid = 1;
+}
+
+message Status{
+    bool value = 1;
+}
+message StringReply{
+    string value = 1;
+}
+message Id{
+    int32 value = 1;
+}
+
+message EmptyMessage {}
+
+enum ElectrodePosition
+{
+    E1 = 0;
+    E2 = 1;
+    E3 = 2;
+    E4 = 3;
+    TopLeft = 4;
+    TopRight = 5;
+    BottomLeft = 6;
+    BottomRight = 7;
+}
+message ConfigurationNew{
+    string name = 1;
+}
+message ConfigurationClose{
+    int32 id = 1;
+    bool save = 2;
+}
+message MuxMapNew{
+    string name = 1;
+    ElectrodePosition electrodePos = 2;
+}
+message MuxMap{
+    ElectrodePosition electrodePos = 1;
+}
+message MuxMapWell{
+    int32 wellNr = 1;
+    ElectrodePosition electrodePos = 2;
+}
+message MuxMapPixel{
+    int32 pixelNr = 1;
+    ElectrodePosition electrodePos = 2;
+}
+enum PulsePolarity
+{
+    PositivePulseFirst = 0;
+    NegativePulseFirst = 1;
+}
+
+enum IStepValues
+{
+    IStep_2pA = 0;
+    IStep_6pA = 1;
+    IStep_500pA = 2;
+    IStep_1500pA = 3;
+}
+
+message VStimConfiguration{
+    string name = 1;
+    float Pulse1VoltagemV = 2;
+    float Pulse2VoltagemV = 3;
+    float Pulse1DurationmS = 4;
+    float Pulse2DurationmS = 5;
+    float PulseTotalDurationmS = 6;
+}
+message IStimConfiguration{
+    string name = 1;
+    IStepValues CurrentStepValue = 2;
+    float Pulse1CurrentpA = 3;
+    float Pulse2CurrentpA = 4;
+    float Pulse1DurationmS = 5;
+    float Pulse2DurationmS = 6;
+    float PulseTotalDurationmS = 7;
+}
+enum RecGain{
+    Gain1 = 0;
+    Gain2_5 = 1;
+    Gain5 = 2;
+    Gain10 = 3;
+    Gain20 = 4;
+    Gain30 = 5;
+    Gain40 = 6;
+    Gain60 = 7;
+}
+
+message RecConfiguration{
+    string name = 1;
+    bool EnableLowPassFilter = 2;
+    RecGain Gain = 3;
+}
+
+enum ImpSpecFreq{
+    Freq_9Hz6 = 0x00;
+    Freq_19Hz2 = 0x01;
+    Freq_48Hz = 0x02;
+    Freq_96Hz = 0x03;
+    Freq_192Hz = 0x04;
+    Freq_480Hz = 0x05;
+    Freq_960Hz = 0x06;
+    Freq_1920Hz = 0x07;
+    Freq_4800Hz = 0x08;
+    Freq_9600Hz = 0x09;
+    Freq_19200Hz = 0x0A;
+    Freq_48kHz = 0x0B;
+    Freq_96kHz = 0x0C;
+    Freq_192kHz = 0x0D;
+    Freq_480kHz = 0x0E;
+    Freq_960kHz = 0x0F;
+}
+
+message ImpSpecFreqConfiguration{
+	ImpSpecFreq Frequency = 1;
+	IStepValues CurrentStepValue = 2;
+	int32 CurrentMultiplier = 3;
+}
+
+message ImpSpecConfiguration{
+    string name = 1;
+    repeated ImpSpecFreqConfiguration lstImpSpecFreqConfiguration = 2;
+}
+
+enum WellReferenceFlag{
+    None = 0x0;
+    External = 0x01;
+    Internal0 = 0x02;
+    Internal1 = 0x04;
+    Internal2 = 0x08;
+    Internal3 = 0x10;
+    Internal4 = 0x20;
+    Internal5 = 0x40;
+    Internal6 = 0x80;
+    Internal7 = 0x100;
+    AllInternal = 0x1FE;
+}
+
+message WellRefSetNew{
+    string name = 1;
+    WellReferenceFlag reference = 2;
+}
+message WellRefSet{
+    WellReferenceFlag reference = 1;
+}
+message WellRef{
+    int32 wellNr = 1;
+    WellReferenceFlag reference = 2;
+}
+
+message PixelConfigurationNew{
+    string name = 1;
+}
+
+message PixelMode{
+    int32 pixelNr = 1;
+    int32 modeId = 2;
+}
+
+message PixelModeWell{
+    int32 wellNr = 1;
+    int32 modeId = 2;
+}
+message PixelModeRow{
+    int32 wellNr = 1;
+    int32 rowNr = 2;
+    int32 modeId = 3;
+}
+message PixelModeColumn{
+    int32 wellNr = 1;
+    int32 columnNr = 2;
+    int32 modeId = 3;
+}
+message PixelModeRange{
+    int32 pixelNrFrom = 1;
+    int32 pixelNrTo = 2;
+    int32 modeId = 3;
+}
+
+message StimulationSequence{
+    int32 pulseCount = 1;
+    PulsePolarity polarity = 2;
+    bool voltageStimulation = 3;
+    bool currentStimulation = 4;
+}
+
+enum ImpMonFrequency{
+    Frequency1kHz = 0;
+    Frequency10kHz = 1;
+}
+enum ImpMonAmplitude{
+    Amplitude1nA = 0;
+    Amplitude10nA = 1;
+}
+
+message ImpedanceMonitoring{
+    ImpMonFrequency frequency  = 1;
+    ImpMonAmplitude amplitude = 2;
+}
+
+message BatchProgramNew{
+    string name = 1;
+}
+
+message BatchSweepCfgMap{
+    repeated int32 lstCfgMapId = 1;
+    bool sweepmuxes = 2;
+    int32 parentId = 3;  //parentId = BatchProgram or another BatchSweep-item
+}
+
+message BatchSweepMuxMap{
+    repeated int32 lstMuxMapId = 1;
+    int32 parentId = 2;
+}
+
+message BatchSweepRefMap{
+    repeated int32 lstRefMapId = 1;
+    int32 parentId = 2;
+}
+
+message BatchSweepVStimSettings{
+    int32 idVStim = 1;
+    repeated VStimConfiguration lstVStimConfiguration = 2;
+    int32 parentId = 3;
+}
+
+message BatchSweepIStimSettings{
+    int32 idIStim = 1;
+    repeated IStimConfiguration lstIStimConfiguration = 2;
+    int32 parentId = 3;
+}
+
+message BatchSweepRecSettings{
+    int32 idRec = 1;
+    repeated RecConfiguration lstRecConfiguration = 2;
+    int32 parentId = 3;
+}
+
+message BatchRepeatSettings {
+    int32 nrRepeats = 1;
+    int32 parentId = 2;
+}
+
+message TimeLineSettings{
+    int32 parentId = 1;
+}
+
+message TimeLineDelaySettings{
+    int32 delayMs = 1;
+    int32 parentId = 2;
+}
+
+enum StimulationMode{
+    Voltage = 0;
+    Current = 1;
+    VoltageAndCurrent = 2;
+}
+
+message TimeLineStimulationEventSettings{
+    StimulationMode stimulationMode = 1;
+    PulsePolarity pulsePolarity = 2;
+    int32 pulseCount = 3;
+    int32 parentId = 4;
+}
+
+message TimelineRepeatSettings{
+    int32 nrRepeats = 1;
+    int32 parentId = 2;
+}
+
+message TimelineImpedanceMonitorSettings{
+    ImpMonFrequency frequency = 1;
+    ImpMonAmplitude amplitude = 2;
+    int32 parentId = 3;
+}
+
+enum Processor{
+    StdDev = 0;
+    Avg = 1;
+    PeakToPeak = 2;
+    ZMon = 3;
+    VRms = 4;
+}
+
+message TimelineSliceDefinitionSettings{
+    repeated Processor processors = 1;
+    int32 parentId = 2;
+}
+
+message RecordWaitTimesOnOffSettings {
+    bool onOff = 1;    
+}
+message ErrorInfo{
+    string functionName = 1;
+    int32 errorNr = 2;
+    string errorDescription = 3;
+}
+
+message ErrorInfoRequest{
+    int32 nrOfMsg = 1;
+}
+
+message ErrorInfoData{
+    repeated ErrorInfo errorInfo = 1;
+}
+
+service RpcService
+{
+    rpc GetAppVersion(EmptyMessage) returns (StringReply) {}
+    rpc GetRpcVersion(EmptyMessage) returns (StringReply) {}
+
+    rpc ScanUSb (EmptyMessage) returns (Status) {}
+    rpc GetDeviceConnectionStatus (EmptyMessage) returns (Status) {}
+
+    rpc EnableAsic (EmptyMessage) returns (Status) {}
+    rpc DisableAsic (EmptyMessage) returns (Status) {}
+    rpc ResetAsic (EmptyMessage) returns (Status) {}
+
+    rpc WriteChipID (ChipID) returns (Status) {}
+    rpc ReadChipID (EmptyMessage) returns (StringReply) {}
+
+    rpc LoadADCCalibrationFile (File) returns (Status) {}
+    rpc DisableADCCalibration (EmptyMessage) returns (Status) {}
+
+    rpc LoadConfigurationFile (File) returns (Id) {}
+    rpc CreateEmptyConfiguration (ConfigurationNew) returns (Id) {}
+    rpc ClearConfiguration (Id) returns (Status) {}
+    rpc CloseConfiguration (ConfigurationClose) returns (Status) {}
+    rpc SetConfigurationActive (Id) returns (Status) {}
+
+    rpc CreateMuxMap (MuxMapNew) returns (Id) {}
+    rpc SetMuxMapActive (Id) returns (Status) {}
+    rpc SetMuxMap (MuxMap) returns (Status) {}
+    rpc SetMuxMapWell (MuxMapWell) returns (Status) {}
+    rpc SetMuxMapPixel (MuxMapPixel) returns (Status) {}
+
+    rpc CreateRefElectrodeMap (WellRefSetNew) returns (Id) {}
+    rpc SetRefElectrodeMapActive (Id) returns (Status) {}
+    rpc SetRefElectrodeMap (WellRefSet) returns (Status) {}
+    rpc SetRefElectrodeWell (WellRef) returns (Status) {}
+
+    rpc CreateVStimMode (VStimConfiguration) returns (Id) {}
+    rpc CreateIStimMode (IStimConfiguration) returns (Id) {}
+    rpc CreateRecMode (RecConfiguration) returns (Id) {}
+    rpc CreateImpSpecMode (ImpSpecConfiguration) returns (Id) {}
+
+    rpc CreatePixelConfiguration(PixelConfigurationNew) returns (Id) {}
+    rpc SetPixelConfigurationActive (Id) returns (Status) {}
+
+    rpc SetPixelMode (PixelMode) returns (Status) {}
+    rpc SetPixelModeWell (PixelModeWell) returns (Status) {}
+    rpc SetPixelModeRow (PixelModeRow) returns (Status) {}
+    rpc SetPixelModeColumn (PixelModeColumn) returns (Status) {}
+    rpc SetPixelModeRange (PixelModeRange) returns (Status) {}
+
+    rpc UploadSettings (EmptyMessage) returns (Status) {}
+    rpc StartAcquisition (EmptyMessage) returns (Status) {}
+    rpc StartBatchRun(EmptyMessage) returns (Status) {}
+    rpc ExecuteBatchRun(EmptyMessage) returns (Status) {}
+    rpc StopAcquisition (EmptyMessage) returns (Status) {}
+    rpc ExecuteImpedanceSpectroscopy(EmptyMessage) returns (Status) {}
+
+    rpc ExportMeasurementData(File) returns (Status) {}
+
+    rpc StartStimulationSequence (StimulationSequence) returns (Status) {}
+    rpc StartImpedanceMonitoring (ImpedanceMonitoring) returns (Status) {}
+    rpc StopImpedanceMonitoring (EmptyMessage) returns (Status) {}
+
+    rpc CreateBatchProgram(BatchProgramNew) returns (Id) {}
+    rpc SetBatchProgramActive(Id) returns (Status) {}
+
+    rpc CreateBatchSweepCfgMap(BatchSweepCfgMap) returns (Id) {}
+    rpc CreateBatchSweepMuxMap(BatchSweepMuxMap) returns (Id) {}
+    rpc CreateBatchSweepRefMap(BatchSweepRefMap) returns (Id) {}
+    rpc CreateBatchSweepVStim(BatchSweepVStimSettings) returns (Id) {}
+    rpc CreateBatchSweepIStim(BatchSweepIStimSettings) returns (Id) {}
+    rpc CreateBatchSweepRec(BatchSweepRecSettings) returns (Id) {}
+    rpc CreateBatchRepeat(BatchRepeatSettings) returns (Id) {}
+    
+    rpc CreateTimeLine(TimeLineSettings) returns (Id) {}
+    rpc CreateTimeLineDelay(TimeLineDelaySettings) returns (Status) {}
+    rpc CreateTimeLineStimulationEvent(TimeLineStimulationEventSettings) returns (Status) {}
+    rpc CreateTimelineRepeat(TimelineRepeatSettings) returns (Id) {}
+    rpc CreateTimelineImpedanceMonitor(TimelineImpedanceMonitorSettings) returns (Id) {}  // TimelineImpedanceMonitor automatically contains TimelineSliceDefinition with ZMon Processor (=Impedance Monitor)
+    rpc CreateTimelineSliceDefinition(TimelineSliceDefinitionSettings) returns (Id) {}
+    
+    rpc SetRecordWaitTimesOnOff(RecordWaitTimesOnOffSettings) returns (Status) {}
+    
+    rpc GetErrorInfo(ErrorInfoRequest) returns (ErrorInfoData) {}
+}

@@ -1,0 +1,8 @@
+- Build yaml for baseline and stimulation protocols
+- Add button to adjust yamls for specific experiment and update based on it if needed
+    * create a copy of yaml and change the configurations on it
+    * save copy yaml with changes or when experiment starts running without changes
+- Build sparrow cfg based on yaml and configuration from baseline
+- Build the experiment control functions
+
+
