@@ -1,1 +1,10 @@
 # Holds the values to generate the configurations of the baseline batch run on the sparrowApp
+main_cfg:
+  config_name: Baseline
+  map_number: 4
+  Stim: False
+
+Rec_cfg:
+  recModel: 'baseline_rec'
+  rec_length_map: 1200 # in seconds
+  Gain: 10

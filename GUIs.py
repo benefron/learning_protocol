@@ -5,6 +5,7 @@ import time
 import queue
 import os
 import Experimnt_control as ec
+import yaml
 
 class ExperimentGUI:
     def __init__(self, root, chip_number, chosen_electorde):
@@ -113,6 +114,10 @@ class ExperimentGUI:
         self.load_path_button_storage = tk.Button(self.right_frame, text="Load Storage Path", command=self.load_path_storage)
         self.load_path_button_storage.pack(pady=5)
 
+        self.open_yaml_button = tk.Button(self.right_frame, text="Open Configurations", command=self.open_yaml_file)
+        self.open_yaml_button.pack(pady=5)
+        self.open_yaml_button.config(state='disabled')
+
         self.quit_button = tk.Button(self.right_frame, text="Quit", command=self.root.quit)
         self.quit_button.pack(pady=5)
 
@@ -199,6 +204,31 @@ class ExperimentGUI:
         path_save = filedialog.askdirectory()
         self.path_save.set(path_save)
         self.log_message(f"Storage Path loaded: {path_save}")
+        # Copy YAML files to the storage path
+        repo_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        baseline_cfg_path = os.path.join(repo_dir, "Baseline_cfg.yaml")
+        recording_cfg_path = os.path.join(repo_dir, "Recording_cfg.yaml")
+
+        if os.path.exists(baseline_cfg_path) and os.path.exists(recording_cfg_path):
+            try:
+                # Copy Baseline_cfg.yaml
+                with open(baseline_cfg_path, 'r') as baseline_file:
+                    baseline_content = baseline_file.read()
+                with open(os.path.join(self.path_save.get(), "Baseline_cfg.yaml"), 'w') as baseline_file_copy:
+                    baseline_file_copy.write(baseline_content)
+                self.log_message("Baseline_cfg.yaml copied successfully.")
+
+                # Copy Recording_cfg.yaml
+                with open(recording_cfg_path, 'r') as recording_file:
+                    recording_content = recording_file.read()
+                with open(os.path.join(self.path_save.get(), "Recording_cfg.yaml"), 'w') as recording_file_copy:
+                    recording_file_copy.write(recording_content)
+                self.log_message("Recording_cfg.yaml copied successfully.")
+            except Exception as e:
+                self.log_message(f"Failed to copy YAML files: {e}")
+        else:
+            self.log_message("YAML files not found in the repository directory.")
+        self.open_yaml_button.config(state='normal')
 
     def disable_inputs(self):
         for widget in self.left_frame.winfo_children():
@@ -330,3 +360,29 @@ class ExperimentGUI:
                 self.log_message(f"Failed to save log: {e}")
         else:
             self.log_message("No streaming path specified. Please load a path to save the log.")
+
+    def open_yaml_file(self):
+        initial_dir = self.path_save.get() if self.path_save.get() else os.getcwd()
+        file_path = filedialog.askopenfilename(initialdir=initial_dir, filetypes=[("YAML files", "*.yaml")])
+        if file_path:
+            self.current_yaml_file_path = file_path
+            with open(file_path, 'r') as file:
+                yaml_content = yaml.safe_load(file)
+                self.show_yaml_editor(yaml.dump(yaml_content))
+
+    def save_yaml_file(self):
+        if hasattr(self, 'yaml_editor'):
+            yaml_content = self.yaml_editor_text.get(1.0, tk.END)
+            with open(self.current_yaml_file_path, 'w') as file:
+                yaml.safe_dump(yaml.safe_load(yaml_content), file)
+            self.log_message(f"YAML file saved successfully at {self.current_yaml_file_path}")
+            self.yaml_editor.destroy()
+
+    def show_yaml_editor(self, content):
+        self.yaml_editor = tk.Toplevel(self.root)
+        self.yaml_editor.title("YAML Editor")
+        self.yaml_editor_text = tk.Text(self.yaml_editor, height=20, width=50)
+        self.yaml_editor_text.pack(padx=10, pady=10)
+        self.yaml_editor_text.insert(tk.END, content)
+        save_button = tk.Button(self.yaml_editor, text="Save", command=self.save_yaml_file)
+        save_button.pack(padx=10, pady=5)
