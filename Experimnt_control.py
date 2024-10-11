@@ -43,7 +43,7 @@ class ExperimentControl:
 
         # upload configurations to chip
 
-        # start acquistion
+        # start batch acquistion
 
         # wait until acquisition is done
         for i in range(30):
@@ -63,9 +63,32 @@ class ExperimentControl:
         
         
 
-    def run_experiment(self, choose_electrode):
-        # This function should run the experiment acquistion should return chossen electrode numer if True
+    def run_preExperiment_stimulation(self):
+        # This function should run the acquistion and return target electrode to choose for learning
+
+        # choose the experiment configuration in the sparrow class
+
+        # Actviate chip
+
+        # upload configurations to chip
+
+        # Run the batch in iteration to acquire the target electrode for learning
+
         pass
+
+    def run_preExperiment_stimulation(self):
+        # This function should run the experiment acquistion 
+
+        # choose the experiment configuration in the sparrow class
+
+        # Actviate chip
+
+        # upload configurations to chip
+
+        # Run the batch in iteration with the right timings and monitor reaching the criteria
+
+        pass
+
     def stop_acquistion(self):
         # This function should stop the acquistion of data from sparrow
         pass
