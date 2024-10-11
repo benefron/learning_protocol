@@ -14,7 +14,7 @@ def main():
     root = tk.Tk()
 
     # Initialize the GUI with the root window
-    experiment_gui = ExperimentGUI(root, chip_number,choosen_electorde)
+    experiment_gui = ExperimentGUI(root)
 
     # Use the `get_parameters` method to retrieve parameters in other parts of your code
     parameters = experiment_gui.get_parameters()

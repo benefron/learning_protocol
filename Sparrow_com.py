@@ -1,8 +1,14 @@
 # This will simulate the communication with the sparrow app
 
 import time
+from SparrowRpcService import *
 
+def initialiseSparrow() -> SparrowRpcService:
+    sparrow = SparrowRpcService('localhost', 443)
+    return sparrow
 
-# this will accept the parameters to run and will return a message
-# when protocol finishes running
+def CreateBatchScript(sparrow: SparrowRpcService):
+    pass
+    
+    
 

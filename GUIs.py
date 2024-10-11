@@ -4,15 +4,15 @@ import threading
 import time
 import queue
 import os
-import Experimnt_control as ec
+from Experimnt_control import ExperimentControl
 import yaml
 
 class ExperimentGUI:
-    def __init__(self, root, chip_number, chosen_electorde):
+    def __init__(self, root ):
         self.root = root
         self.root.title("Experiment GUI")
-        self.chip_number = chip_number
-        self.chosen_electrode = chosen_electorde
+        self.chip_number = ''
+        self.chosen_electrode = ''
 
         # Configure grid layout for the root window
         self.root.columnconfigure(0, weight=1)  # Left frame column
@@ -42,6 +42,8 @@ class ExperimentGUI:
         self.path_save = tk.StringVar(value="")
         self.exp_path_storage = tk.StringVar(value="")
         self.exp_path_streaming = tk.StringVar(value="")
+        self.yaml_basline = tk.StringVar(value="")
+        self.yaml_recording = tk.StringVar(value="")
 
         # Create input fields
         self.create_input_fields()
@@ -73,6 +75,11 @@ class ExperimentGUI:
         self.stop_event = threading.Event()
         self.running = False
         self.experiment_thread = None
+
+        self.experiment = ExperimentControl(self)
+        self.chip_number = self.experiment.chip_number
+        self.chip_number_label.config(text=f"Target Elctrode: {self.chip_number}")
+        self.experiment.get_comm()
 
         # Start a separate thread to handle GUI message logging
         self.root.after(100, self.process_log_queue)
@@ -167,7 +174,7 @@ class ExperimentGUI:
             messagebox.showinfo("Information", f"Please make sure that the defult path in SparrowApp is set to the streaming path: {exp_path_streaming} and press OK to start the experiment")
             
             # Start the experiment in a separate thread
-            
+            self.update_parameters_experiment()
             self.experiment_thread = threading.Thread(target=self.run_experiment)
             self.experiment_thread.start()
             # Start the clock in a separate thread
@@ -217,6 +224,7 @@ class ExperimentGUI:
                 with open(os.path.join(self.path_save.get(), "Baseline_cfg.yaml"), 'w') as baseline_file_copy:
                     baseline_file_copy.write(baseline_content)
                 self.log_message("Baseline_cfg.yaml copied successfully.")
+                self.yaml_basline.set(os.path.join(self.path_save.get(), "Baseline_cfg.yaml"))
 
                 # Copy Recording_cfg.yaml
                 with open(recording_cfg_path, 'r') as recording_file:
@@ -224,6 +232,7 @@ class ExperimentGUI:
                 with open(os.path.join(self.path_save.get(), "Recording_cfg.yaml"), 'w') as recording_file_copy:
                     recording_file_copy.write(recording_content)
                 self.log_message("Recording_cfg.yaml copied successfully.")
+                self.yaml_recording.set(os.path.join(self.path_save.get(), "Recording_cfg.yaml"))
             except Exception as e:
                 self.log_message(f"Failed to copy YAML files: {e}")
         else:
@@ -254,8 +263,8 @@ class ExperimentGUI:
         while not self.stop_event.is_set():
             # run baseline function
             self.log_message("Running baseline recording")
-            message = ec.run_baseline(self)
-            self.log_message(message)
+            #message = ec.run_baseline(self)
+            #self.log_message(message)
             
             # check if experiment was stopped
             if self.stop_event.is_set():
@@ -263,10 +272,10 @@ class ExperimentGUI:
             
             # Run stimulation protocol to choose target electrode below R/S criterion
             self.log_message("Determining target electrode")
-            target_electrode, message = ec.run_stimulation(self)
-            self.electorde_label.config(text=f"Target Elctrode: {target_electrode}")
-            self.target_electrode.set(target_electrode)
-            self.log_message(message)
+            #target_electrode, message = ec.run_stimulation(self)
+            #self.electorde_label.config(text=f"Target Elctrode: {target_electrode}")
+            #self.target_electrode.set(target_electrode)
+            #self.log_message(message)
             
             #check if experiment was stopped
             if self.stop_event.is_set():
@@ -386,3 +395,16 @@ class ExperimentGUI:
         self.yaml_editor_text.insert(tk.END, content)
         save_button = tk.Button(self.yaml_editor, text="Save", command=self.save_yaml_file)
         save_button.pack(padx=10, pady=5)
+
+    def update_parameters_experiment(self):
+        self.experiment.GUI.exp_path_storage.set(self.exp_path_storage.get())
+        self.experiment.GUI.exp_path_streaming.set(self.exp_path_streaming.get())
+        self.experiment.GUI.yaml_basline.set(self.yaml_basline.get())
+        self.experiment.GUI.yaml_recording.set(self.yaml_recording.get())
+        self.experiment.GUI.well_number.set(self.well_number.get())
+        self.experiment.GUI.max_time.set(self.max_time.get())
+        self.experiment.GUI.rest_time.set(self.rest_time.get())
+        self.experiment.GUI.criterion.set(self.criterion.get())
+        self.experiment.GUI.simulating_electrode.set(self.simulating_electrode.get())
+        self.experiment.GUI.experiment_type.set(self.experiment_type.get())
+        self.log_message("Parameters updated successfully.")
