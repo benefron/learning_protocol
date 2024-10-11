@@ -144,6 +144,7 @@ class ExperimentGUI:
             return
         if self.path.get():
             self.stop_button.config(state='normal')
+            self.stop_event.clear()
             self.running = True
             prefix = self.chip_number  # You can change this prefix later
             today_date = time.strftime("%d%m%Y")
@@ -187,8 +188,8 @@ class ExperimentGUI:
         self.stop_event.set() 
         self.running = False
         
-        if self.experiment_thread is not None:
-            self.experiment_thread.join()  # Ensure the thread has completed
+        #if self.experiment_thread is not None:
+          #  self.experiment_thread.join()  # Ensure the thread has completed
         self.start_button.config(state='normal')
         self.load_path_button.config(state='normal')
         self.load_path_button_storage.config(state='normal')
@@ -262,12 +263,14 @@ class ExperimentGUI:
         while not self.stop_event.is_set():
             # run baseline function
             self.log_message("Running baseline recording")
-            message = self.experiment.run_basleine()
-            self.log_message(message)
+            baseline_thread = threading.Thread(target=self.experiment.run_basleine(self.stop_event))
+            baseline_thread.start()
+            baseline_thread.join()  # Wait until the baseline thread finishes
             
             # check if experiment was stopped
             if self.stop_event.is_set():
                 break
+            self.log_message("Baseline recording completed")
             
             # Run stimulation protocol to choose target electrode below R/S criterion
             self.log_message("Determining target electrode")
@@ -286,7 +289,7 @@ class ExperimentGUI:
             self.log_message("Experiment completed")
             self.stop_experiment()
             time.sleep(10)
-        self.log_message("Experiment stopped")
+        #self.log_message("Experiment stopped")
         
         #time.sleep(10)
 

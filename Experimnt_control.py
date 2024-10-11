@@ -35,16 +35,32 @@ class ExperimentControl:
         # Create a sparrow class object with the configuration from the yaml files and the cfg name 
         pass
 
-    def run_basleine(self):
+    def run_basleine(self,stop_acq):
         # This function should run the baseline acquistion
         # choose the basline configuration in the sparrow class
+
+        # Actviate chip
+
+        # upload configurations to chip
 
         # start acquistion
 
         # wait until acquisition is done
-        time.sleep(30)
+        for i in range(30):
+            if not stop_acq.is_set():
+                time.sleep(1)
+                if i % 5 == 0:
+                    self.GUI.log_message('5 seconds have passed')
+            else:
+                self.stop_acquistion()
+                time.sleep(0.5)
+                self.GUI.log_message('Baseline acquisition stopped')
+                # Deactivate chip
+                break
         # move file to storage path
-        return 'Baseline acquisition done'
+
+        # deactivate chip
+        
         
 
     def run_experiment(self, choose_electrode):
