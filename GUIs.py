@@ -179,8 +179,7 @@ class ExperimentGUI:
             self.experiment_thread.start()
             # Start the clock in a separate thread
             threading.Thread(target=self.update_clock).start()
-            self.experiment_thread = threading.Thread(target=self.run_experiment)
-            self.experiment_thread.start()
+
         else:
             messagebox.showwarning("Warning", "Please load a streaming path before starting the experiment.")
 
@@ -263,8 +262,8 @@ class ExperimentGUI:
         while not self.stop_event.is_set():
             # run baseline function
             self.log_message("Running baseline recording")
-            #message = ec.run_baseline(self)
-            #self.log_message(message)
+            message = self.experiment.run_basleine()
+            self.log_message(message)
             
             # check if experiment was stopped
             if self.stop_event.is_set():

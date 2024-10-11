@@ -37,7 +37,15 @@ class ExperimentControl:
 
     def run_basleine(self):
         # This function should run the baseline acquistion
-        pass
+        # choose the basline configuration in the sparrow class
+
+        # start acquistion
+
+        # wait until acquisition is done
+        time.sleep(30)
+        # move file to storage path
+        return 'Baseline acquisition done'
+        
 
     def run_experiment(self, choose_electrode):
         # This function should run the experiment acquistion should return chossen electrode numer if True
