@@ -274,6 +274,9 @@ class ExperimentGUI:
             
             # Run stimulation protocol to choose target electrode below R/S criterion
             self.log_message("Determining target electrode")
+            electrode_scan = threading.Thread(target=self.experiment.run_preExperiment_stimulation())
+            electrode_scan.start()
+            electrode_scan.join()  # Wait until the electrode scan finishes
             #target_electrode, message = ec.run_stimulation(self)
             #self.electorde_label.config(text=f"Target Elctrode: {target_electrode}")
             #self.target_electrode.set(target_electrode)
