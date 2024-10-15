@@ -2,7 +2,7 @@
 
 # imports
 import time
-#from Sparrow_com import *
+FIXME#from Sparrow_com import *
 from SimulatedTrace import *
 import matplotlib.pyplot as plt
 import matplotlib
@@ -21,22 +21,22 @@ class ExperimentControl:
         # Should read the yaml files and generate the sparrow configuration
         # what info is needed from the main GUI?
         self.GUI = experiment_gui
-        #self.cfg_basline = 'baseline'
-        #self.cfg_experiment = 'experiment'
-        # self.sparrow = initialiseSparrow()
+        #FIXME#self.cfg_basline = 'baseline'
+        #FIXME#self.cfg_experiment = 'experiment'
+        #FIXME self.sparrow = initialiseSparrow()
         self.chip_number ='SP101'#self.sparrow.ReadChipID()
 
     def get_comm(self):
-        #self.sparrow.SetPrintInfo(True)
-        appVersion = '1.0'#self.sparrow.GetAppVersion()
-        rpcVersion = '2.0'#self.sparrow.GetRpcVersion() 
-        #self.sparrow.SetPrintInfo(False)
-        self.sparrow = 10 # place holder for simulation
-        self.GUI.log_message('Sparrow App Version: ' + appVersion)
-        self.GUI.log_message('Sparrow Rpc version: ' + rpcVersion)
+        #FIXMEself.sparrow.SetPrintInfo(True)
+        appVersion = '1.0'#FIXMEself.sparrow.GetAppVersion()
+        rpcVersion = '2.0'#FIXMEself.sparrow.GetRpcVersion() 
+        #FIXMEself.sparrow.SetPrintInfo(False)
+        self.sparrow = 10 # FIXMEplace holder for simulation
+        self.GUI.log_message(f'Sparrow App Version: {appVersion}')
+        self.GUI.log_message(f'Sparrow Rpc version: {rpcVersion}')
 
     def generate_sparrow_cfg(self):
-        # This function should read the yaml files and generate the sparrow configuration
+        #TODO This function should read the yaml files and generate the sparrow configuration
         # Create a sparrow class object with the configuration from the yaml files and the cfg name 
         pass
 
@@ -45,13 +45,13 @@ class ExperimentControl:
         baseline_runtime = int(baseline_runtime * 6); # convert to seconds 
         # This function should run the baseline acquistion
         # choose the basline configuration in the sparrow class
-        #self.sparrow.SetConfigurationActive(self.cfg_basline)
+        #FIXMEself.sparrow.SetConfigurationActive(self.cfg_basline)
         # Actviate chip
-        #self.sparrow.EnableAsic()
+        #FIXMEself.sparrow.EnableAsic()
         # upload configurations to chip
-        #self.sparrow.UploadSettings()
+        #FIXMEself.sparrow.UploadSettings()
         # start batch acquistion
-        #self.sparrow.StartBatchRun()
+        #FIXMEself.sparrow.StartBatchRun()
         # wait until acquisition is done
         for i in range(baseline_runtime):
             if not stop_acq.is_set():
@@ -65,25 +65,25 @@ class ExperimentControl:
                 time.sleep(0.5)
                 self.GUI.log_message('Baseline acquisition stopped')
                 # Deactivate chip
-                #self.sparrow.DisableAsic()
+                #FIXMEself.sparrow.DisableAsic()
                 break
         # move file to storage path
         
         # deactivate chip
-        #self.sparrow.DisableAsic()
+        #FIXMEself.sparrow.DisableAsic()
         
 
     def run_preExperiment_stimulation(self):
         #self.sparrow.SetConfigurationActive(self.cfg_experiment)
         # Actviate chip
-        #self.sparrow.EnableAsic()
+        #FIXMEself.sparrow.EnableAsic()
         # upload configurations to chip
-        #self.sparrow.UploadSettings()
+        #FIXMEself.sparrow.UploadSettings()
         #start batch acquistion
-        #self.sparrow.StartBatchRun()
+        #FIXMEself.sparrow.StartBatchRun()
 
-        # This is the stimulation of running the experiment
-        for i in range(30):
+        #TODO This is the stimulation of running the experiment
+        for _ in range(30):
             matrix = vector_to_matrix(30)
             # calculate if has a threshold crossing event at 40-60ms after the stimulation
             
@@ -92,7 +92,7 @@ class ExperimentControl:
         
 
     def run_preExperiment_stimulation(self):
-        # This function should run the experiment acquistion 
+        #TODO This function should run the experiment acquistion 
 
         # choose the experiment configuration in the sparrow class
 
@@ -105,7 +105,7 @@ class ExperimentControl:
         pass
 
     def stop_acquistion(self):
-        # This function should stop the acquistion of data from sparrow
+        #TODO This function should stop the acquistion of data from sparrow
         pass
     
 
