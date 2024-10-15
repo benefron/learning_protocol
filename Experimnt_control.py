@@ -83,50 +83,10 @@ class ExperimentControl:
         #self.sparrow.StartBatchRun()
 
         # This is the stimulation of running the experiment
-        matrix = vector_to_matrix(30)
-        # Generate two plots from matrix
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
-
-        k = 25
-        sampling_rate = 30000
-        time_axis = np.arange(len(matrix[0])) / sampling_rate
-        for row in matrix:
-            ax1.plot(time_axis, row + k)
-            k += 25
-        
-        ax1.set_title('Raw Data')
-        ax1.set_xlabel('Time (s)')
-        
-        matrix = np.array(matrix)
-        bin_size = int(0.01 * sampling_rate)  # 25 ms time bins
-        # Calculate peak-to-peak range for each channel in 25 ms bins
-        num_bins = len(matrix[0]) // bin_size
-        num_channels = matrix.shape[0]
-        threshold = 0.5
-        binary_map = np.zeros((num_channels, num_bins))
-        for i in range(num_channels):
-            for j in range(num_bins):
-                start = j * bin_size
-                end = start + bin_size
-                if np.any(matrix[i, start:end] > threshold):
-                    binary_map[i, j] = 1
-                else:
-                    binary_map[i, j] = 0
-
-        # Plot heatmap of the peak-to-peak values on ax2
-        im = ax2.imshow(binary_map, aspect='auto', cmap='gray_r', origin='lower',
-                extent=[0, num_bins * 0.01, 0, num_channels], interpolation='nearest', vmin=0, vmax=1)
-
- 
-
-
-                # Set labels and title for ax2
-        ax2.set_title('Peak-to-Peak Heatmap (25 ms Bins)')
-        ax2.set_xlabel('Time (s)')
-        ax2.set_ylabel('Channel')
-
-        plt.tight_layout()
-        plt.show()
+        for i in range(30):
+            matrix = vector_to_matrix(30)
+            # calculate if has a threshold crossing event at 40-60ms after the stimulation
+            
 
 
         
