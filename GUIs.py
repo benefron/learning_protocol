@@ -4,7 +4,7 @@ import threading
 import time
 import queue
 import os
-from Experimnt_control import ExperimentControl
+from Experiment_control import ExperimentControl
 import yaml
 
 class ExperimentGUI:

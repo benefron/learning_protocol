@@ -2,7 +2,7 @@
 
 # imports
 import time
-FIXME#from Sparrow_com import *
+#FIXMEfrom Sparrow_com import *
 from SimulatedTrace import *
 import matplotlib.pyplot as plt
 import matplotlib
