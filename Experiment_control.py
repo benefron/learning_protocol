@@ -6,6 +6,7 @@ import time
 from SimulatedTrace import *
 import matplotlib.pyplot as plt
 import matplotlib
+from Calculations_functions import *
 
 # this class should hold functions to do the following:
 # 1. Generate the sparrow configuration based on the yaml files
@@ -13,7 +14,7 @@ import matplotlib
 # 3. Run the acquistion protocol (threaded)
 # 4. Run the calculations and visulaization based on the recorded data
 #matplotlib.use('macosx')
-matplotlib.use('TkAgg')
+matplotlib.use('Qt5Agg')
 
 
 class ExperimentControl:
@@ -91,7 +92,7 @@ class ExperimentControl:
 
         
 
-    def run_preExperiment_stimulation(self):
+    def run_Experiment_stimulation(self):
         #TODO This function should run the experiment acquistion 
 
         # choose the experiment configuration in the sparrow class
@@ -101,8 +102,27 @@ class ExperimentControl:
         # upload configurations to chip
 
         # Run the batch in iteration with the right timings and monitor reaching the criteria
+        
+        #TODO simulation of running the experiment 
+        for iteration in range(30):
+            criteria_count = []
+            for t in range(1000):
+                vector = Single_electrode()
+                time.sleep(0.5)
+                event_in_time = check_crossing(self.GUI.yaml_recording, vector)
+                # calculate if has a threshold crossing event at 40-60ms after the stimulation
+                if len(criteria_count) >= 10:
+                    criteria_count.pop(0)
+                criteria_count.append(event_in_time)
+                criteria_count_np = np.array(criteria_count).sum()/10
+                if criteria_count_np >= 2/10:
+                    self.GUI.log_message(f'Criteria reached after [t] seconds')
+                    plt.plot(iteration,t)
+                    break
+                else:
+                    self.GUI.log_message('Criteria not reached in time')
 
-        pass
+        
 
     def stop_acquistion(self):
         #TODO This function should stop the acquistion of data from sparrow

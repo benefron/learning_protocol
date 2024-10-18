@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d66c3f4e-27fe-44c5-a199-7ee4b04ece47" name="Changes" comment="" />
+    <list default="true" id="d66c3f4e-27fe-44c5-a199-7ee4b04ece47" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Calculations_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/Calculations_functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SimulatedTrace.py" beforeDir="false" afterPath="$PROJECT_DIR$/SimulatedTrace.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,6 +23,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python.SimulatedTrace.executor": "Run",
     "Python.main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
@@ -45,6 +49,7 @@
       <updated>1728999856817</updated>
       <workItem from="1728999857965" duration="67000" />
       <workItem from="1728999928492" duration="115000" />
+      <workItem from="1729084411713" duration="33000" />
     </task>
     <servers />
   </component>
@@ -64,5 +69,6 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/learning_protocol$main.coverage" NAME="main Coverage Results" MODIFIED="1728999991606" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/learning_protocol$SimulatedTrace.coverage" NAME="SimulatedTrace Coverage Results" MODIFIED="1729084431250" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

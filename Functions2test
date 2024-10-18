@@ -1,0 +1,45 @@
+def check_crossing_local(iteration_number,rep_num):
+    """Check if the vector crosses a threshold within a specified time window."""
+    cfg_dic = read_yaml_file(file_path)
+    vector = Single_electrode(iteration_number)
+    rms_vector = np.sqrt(np.mean(vector**2))
+    threshold = rms_vector * cfg_dic['calculations']['threshold_scaling']
+    time_window = [cfg_dic['time_window_settings']['start_time'],cfg_dic['time_window_settings']['end_time']]
+    # crossing_events = np.where((vector[:1] < threshold) & (vector[1:] >= threshold))[0] + 1
+    crossing_points = np.where((vector[:-1] < threshold) & (vector[1:] >= threshold))[0] + 1
+    time_window_samples = np.array(time_window) * 30000
+    time_window_samples = time_window_samples.astype(int)
+    time_window_samples = np.linspace(time_window_samples[0], time_window_samples[1], time_window_samples[1] - time_window_samples[0]).astype(int)
+    k = np.intersect1d(crossing_points, time_window_samples).any()  
+    return vector, k
+
+
+
+for n in range(60):
+    all_k = []
+    for i in range(1000):
+        vector, k = check_crossing_local(i,n)
+        if len(all_k) >=10:
+            all_k.pop(0)
+        all_k.append(k)
+        all_k_np = np.array(all_k).sum()
+        if all_k_np/10 >= 2/10:
+            print(f'criteria reached after {i} seconds')
+            plt.scatter(n,i,color='k')
+            break
+        else:
+            print('criteria not reached')
+    time.sleep(10)
+    
+    
+    plt.ion()  # Turn on interactive mode
+    fig, ax = plt.subplots()
+    ax.set_xlabel('Iteration')
+    ax.set_ylabel('Random Number')
+    ax.set_title('Online Scatter Plot')
+
+    for iteration in range(10):
+        random_number = np.random.rand()
+        ax.scatter(iteration, random_number, color='b')
+        plt.draw()
+        plt.pause(0.5)  # Pause to update the plot

@@ -10,8 +10,14 @@ Rec_cfg:
   Gain: 10
 
 stim_cfg:
-  time_before: 0.01 # in seconds
-  time_after: 0.06 # in seconds
+  time_before: 0.02 # in seconds
+  time_after: 0.46 # in seconds
   stimulation_length: 0.02 # in seconds
   stim_amp: 53 # in mV
 
+time_window_settings:
+  start_time: 0.04
+  end_time: 0.06
+
+calculations:
+  threshold_scaling: 6
