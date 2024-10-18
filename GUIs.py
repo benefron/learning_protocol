@@ -9,6 +9,7 @@ import yaml
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+import numpy as np
 
 class ExperimentGUI:
     def __init__(self, root ):
@@ -283,6 +284,7 @@ class ExperimentGUI:
             self.log_message("Baseline recording completed")
             
             # Run stimulation protocol to choose target electrode below R/S criterion
+            self.plot_queue.put(('clear', None))
             self.log_message("Determining target electrode")
             electrode_scan = threading.Thread(target=self.experiment.run_preExperiment_stimulation())
             electrode_scan.start()
@@ -401,8 +403,17 @@ class ExperimentGUI:
         # Check if there is new data in the plot queue
         try:
             while not self.plot_queue.empty():
-                data = self.plot_queue.get_nowait()
-                self.ax.scatter(data[0], data[1], color='k')  # Update plot with new data point (example)
+                command, data = self.plot_queue.get_nowait()
+                if command == 'clear':
+                    self.ax.clear()
+                    self.ax.set_title(f"Real-time Learning Curve for {self.criterion.get()} R/S")
+                    self.ax.set_xlabel("Iteration")
+                    self.ax.set_ylabel("Time to reach criterion")
+                elif command == 'experiment':
+                    self.ax.scatter(data[0], data[1], color='k')  # Update plot with new data point (example)
+                else:
+                    time_vector = np.linspace(1, len(data), len(data))/30000
+                    self.ax.plot(time_vector,data)
                 self.canvas.draw()
         except queue.Empty:
             pass
@@ -446,11 +457,11 @@ class ExperimentGUI:
 
     def init_plot(self):
                 # Create a figure for plotting
-        self.figure = Figure(figsize=(5, 4), dpi=100)
+        self.figure = Figure(figsize=(5, 4), dpi=200)
         self.ax = self.figure.add_subplot(111)
-        self.ax.set_title(f"Real-time Learning Curve for {self.criterion.get()} R/S")
-        self.ax.set_xlabel("Iteration")
-        self.ax.set_ylabel("Time to reach criterion")
+        self.ax.set_title(f"Single trace")
+        self.ax.set_xlabel("Time (sec)")
+        self.ax.set_ylabel("Amplitude")
         
         # Add the figure to a new window
         self.plot_window = tk.Toplevel(self.root)

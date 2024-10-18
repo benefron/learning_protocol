@@ -84,9 +84,10 @@ class ExperimentControl:
         #FIXMEself.sparrow.StartBatchRun()
 
         #TODO This is the stimulation of running the experiment
-        for _ in range(30):
-            matrix = vector_to_matrix(30)
-            # calculate if has a threshold crossing event at 40-60ms after the stimulation
+        vector = Single_electrode()
+        self.GUI.plot_queue.put(('preExp',vector))
+        time.sleep(30)
+        
             
 
 
@@ -121,7 +122,7 @@ class ExperimentControl:
                         if criteria_count_np/10 >= 2/10:
                             self.GUI.log_message(f'Criteria reached after {t} seconds')
                             data = [iteration, t]
-                            self.GUI.plot_queue.put(data)
+                            self.GUI.plot_queue.put(('experiment',data))
                             break
                         elif t == repition_number - 1:
                             self.GUI.log_message('Criteria not reached in time')
