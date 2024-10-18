@@ -11,9 +11,13 @@ def insert_peaks(max_num_peaks=2, peak_length=20, peak_height=2, iteration_numer
     peak_indices = np.random.choice(len(vector) - peak_length, num_peaks, replace=False)
     num_rep = np.random.randint(2,10)
     for idx in peak_indices:
-        if ~repition == 0:
-            if iteration_numer > 140:
+        if repition == 0:
+            if iteration_numer > 300:
+                vector[2100:2100 + peak_length] = peak
+            elif iteration_numer > 60 and iteration_numer < 300:
                 vector[idx:idx + peak_length] = peak
+            else:
+                vector = vector   
         else:
             vector[idx:idx + peak_length] = peak
         if repition == 1 and iteration_numer > 35:
@@ -22,8 +26,12 @@ def insert_peaks(max_num_peaks=2, peak_length=20, peak_height=2, iteration_numer
         elif repition >=num_rep and iteration_numer > 4:
             if iteration_numer % 2 == 0:
                 vector[2100:2100 + peak_length] = peak
-        else:
+        elif repition > 1:
             vector[idx:idx + peak_length] = peak
+    if repition >=num_rep and iteration_numer > 10:
+            random_int = np.random.randint(1, 10)
+            if not random_int % 3 == 0:
+                vector[2100:2100 + peak_length] = peak
     return vector
 
 def vector_to_matrix(elec_num):

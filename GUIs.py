@@ -284,7 +284,7 @@ class ExperimentGUI:
             self.log_message("Baseline recording completed")
             
             # Run stimulation protocol to choose target electrode below R/S criterion
-            self.plot_queue.put(('clear', None))
+            
             self.log_message("Determining target electrode")
             electrode_scan = threading.Thread(target=self.experiment.run_preExperiment_stimulation())
             electrode_scan.start()
@@ -293,7 +293,8 @@ class ExperimentGUI:
             #self.electorde_label.config(text=f"Target Elctrode: {target_electrode}")
             #self.target_electrode.set(target_electrode)
             #self.log_message(message)
-
+            self.plot_queue.put(('clear', None))
+            time.sleep(0.6)
             run_exps = threading.Thread(target=self.experiment.run_Experiment_stimulation(self.stop_event))
             run_exps.start()
             run_exps.join()
@@ -414,6 +415,8 @@ class ExperimentGUI:
                 else:
                     time_vector = np.linspace(1, len(data), len(data))/30000
                     self.ax.plot(time_vector,data)
+                    self.ax.set_title(f"Single trace")
+                    self.ax.fill_betweenx([-0.1, 2], 0.06, 0.08, color='red', alpha=0.2)
                 self.canvas.draw()
         except queue.Empty:
             pass
@@ -457,19 +460,20 @@ class ExperimentGUI:
 
     def init_plot(self):
                 # Create a figure for plotting
-        self.figure = Figure(figsize=(5, 4), dpi=200)
+        self.figure = Figure(figsize=(4, 3), dpi=200)
         self.ax = self.figure.add_subplot(111)
         self.ax.set_title(f"Single trace")
         self.ax.set_xlabel("Time (sec)")
         self.ax.set_ylabel("Amplitude")
+        self.figure.tight_layout(pad=2.0)  # Adjust layout to make sure labels are visible
         
         # Add the figure to a new window
         self.plot_window = tk.Toplevel(self.root)
         self.plot_window.title("Real-time Data Plot")
         
             # Set window geometry to position it at the top-right corner
-        window_width = 500  # Set desired width of the window
-        window_height = 400  # Set desired height of the window
+        window_width = 700  # Set desired width of the window
+        window_height = 600  # Set desired height of the window
         screen_width = self.root.winfo_screenwidth()
         x_coordinate = screen_width - window_width - 20  # 20 pixels for a small margin
         y_coordinate = 20  # 20 pixels from the top

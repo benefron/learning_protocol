@@ -84,9 +84,9 @@ class ExperimentControl:
         #FIXMEself.sparrow.StartBatchRun()
 
         #TODO This is the stimulation of running the experiment
-        vector = Single_electrode()
+        vector = Single_electrode(20,80)
         self.GUI.plot_queue.put(('preExp',vector))
-        time.sleep(30)
+        time.sleep(5)
         
             
 
@@ -105,10 +105,10 @@ class ExperimentControl:
         # Run the batch in iteration with the right timings and monitor reaching the criteria
 
         #TODO simulation of running the experiment 
-        for iteration in range(60):
+        for iteration in range(30):
             if not stop_acq.is_set():
                 criteria_count = []
-                repition_number = 2000;
+                repition_number = 3000;
                 for t in range(repition_number):
                     if not stop_acq.is_set():
                         vector = Single_electrode(t,iteration)
@@ -119,7 +119,7 @@ class ExperimentControl:
                             criteria_count.pop(0)
                         criteria_count.append(event_in_time)
                         criteria_count_np = np.array(criteria_count).sum()
-                        if criteria_count_np/10 >= 2/10:
+                        if criteria_count_np/10 >= self.GUI.criterion.get()/10:
                             self.GUI.log_message(f'Criteria reached after {t} seconds')
                             data = [iteration, t]
                             self.GUI.plot_queue.put(('experiment',data))
