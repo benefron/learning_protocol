@@ -12,7 +12,7 @@ def insert_peaks(max_num_peaks=2, peak_length=20, peak_height=2, iteration_numer
     num_rep = np.random.randint(2,10)
     for idx in peak_indices:
         if ~repition == 0:
-            if iteration_numer > 90:
+            if iteration_numer > 140:
                 vector[idx:idx + peak_length] = peak
         else:
             vector[idx:idx + peak_length] = peak

@@ -92,7 +92,7 @@ class ExperimentControl:
 
         
 
-    def run_Experiment_stimulation(self):
+    def run_Experiment_stimulation(self,stop_acq):
         #TODO This function should run the experiment acquistion 
 
         # choose the experiment configuration in the sparrow class
@@ -105,25 +105,35 @@ class ExperimentControl:
 
         #TODO simulation of running the experiment 
         for iteration in range(60):
-            criteria_count = []
-            repition_number = 2000;
-            for t in range(repition_number):
-                vector = Single_electrode(t,iteration)
-                yaml_path = self.GUI.yaml_recording.get()
-                event_in_time = check_crossing(yaml_path, vector)
-                # calculate if has a threshold crossing event at 40-60ms after the stimulation
-                if len(criteria_count) >= 10:
-                    criteria_count.pop(0)
-                criteria_count.append(event_in_time)
-                criteria_count_np = np.array(criteria_count).sum()
-                if criteria_count_np/10 >= 2/10:
-                    self.GUI.log_message(f'Criteria reached after {t} seconds')
-                    data = [iteration, t]
-                    self.GUI.plot_queue.put(data)
-                    break
-                elif t == repition_number - 1:
-                    self.GUI.log_message('Criteria not reached in time')
-            time.sleep(1)    
+            if not stop_acq.is_set():
+                criteria_count = []
+                repition_number = 2000;
+                for t in range(repition_number):
+                    if not stop_acq.is_set():
+                        vector = Single_electrode(t,iteration)
+                        yaml_path = self.GUI.yaml_recording.get()
+                        event_in_time = check_crossing(yaml_path, vector)
+                        # calculate if has a threshold crossing event at 40-60ms after the stimulation
+                        if len(criteria_count) >= 10:
+                            criteria_count.pop(0)
+                        criteria_count.append(event_in_time)
+                        criteria_count_np = np.array(criteria_count).sum()
+                        if criteria_count_np/10 >= 2/10:
+                            self.GUI.log_message(f'Criteria reached after {t} seconds')
+                            data = [iteration, t]
+                            self.GUI.plot_queue.put(data)
+                            break
+                        elif t == repition_number - 1:
+                            self.GUI.log_message('Criteria not reached in time')
+                    else:
+                        break
+                time.sleep(1) 
+            else:
+                self.stop_acquistion()
+                time.sleep(0.5)
+                self.GUI.log_message('Experiment stopped')
+                break
+               
         
 
     def stop_acquistion(self):

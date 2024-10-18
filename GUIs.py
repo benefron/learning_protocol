@@ -292,7 +292,7 @@ class ExperimentGUI:
             #self.target_electrode.set(target_electrode)
             #self.log_message(message)
 
-            run_exps = threading.Thread(target=self.experiment.run_Experiment_stimulation())
+            run_exps = threading.Thread(target=self.experiment.run_Experiment_stimulation(self.stop_event))
             run_exps.start()
             run_exps.join()
             #check if experiment was stopped
@@ -448,7 +448,7 @@ class ExperimentGUI:
                 # Create a figure for plotting
         self.figure = Figure(figsize=(5, 4), dpi=100)
         self.ax = self.figure.add_subplot(111)
-        self.ax.set_title("Real-time Learning Curve")
+        self.ax.set_title(f"Real-time Learning Curve for {self.criterion.get()} R/S")
         self.ax.set_xlabel("Iteration")
         self.ax.set_ylabel("Time to reach criterion")
         
