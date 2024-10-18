@@ -6,6 +6,9 @@ import queue
 import os
 from Experiment_control import ExperimentControl
 import yaml
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 
 class ExperimentGUI:
     def __init__(self, root ):
@@ -70,6 +73,9 @@ class ExperimentGUI:
 
         # Queue for thread-safe logging
         self.log_queue = queue.Queue()
+        
+        # Queue for plotting data
+        self.plot_queue = queue.Queue()
 
         # Variable to control experiment run and clock update
         self.stop_event = threading.Event()
@@ -83,6 +89,9 @@ class ExperimentGUI:
 
         # Start a separate thread to handle GUI message logging
         self.root.after(100, self.process_log_queue)
+        self.root.after(100, self.update_plot)
+        
+        
 
     def create_input_fields(self):
         tk.Label(self.left_frame, text="Experiment Parameters:").pack(anchor='w')
@@ -175,6 +184,7 @@ class ExperimentGUI:
             messagebox.showinfo("Information", f"Please make sure that the defult path in SparrowApp is set to the streaming path: {exp_path_streaming} and press OK to start the experiment")
             
             # Start the experiment in a separate thread
+            self.init_plot()
             self.update_parameters_experiment()
             self.experiment_thread = threading.Thread(target=self.run_experiment)
             self.experiment_thread.start()
@@ -281,7 +291,10 @@ class ExperimentGUI:
             #self.electorde_label.config(text=f"Target Elctrode: {target_electrode}")
             #self.target_electrode.set(target_electrode)
             #self.log_message(message)
-            
+
+            run_exps = threading.Thread(target=self.experiment.run_Experiment_stimulation())
+            run_exps.start()
+            run_exps.join()
             #check if experiment was stopped
             if self.stop_event.is_set():
                 break
@@ -383,6 +396,20 @@ class ExperimentGUI:
             with open(file_path, 'r') as file:
                 yaml_content = yaml.safe_load(file)
                 self.show_yaml_editor(yaml.dump(yaml_content))
+                
+    def update_plot(self):
+        # Check if there is new data in the plot queue
+        try:
+            while not self.plot_queue.empty():
+                data = self.plot_queue.get_nowait()
+                self.ax.scatter(data[0], data[1], color='k')  # Update plot with new data point (example)
+                self.canvas.draw()
+        except queue.Empty:
+            pass
+
+        # Schedule the next update
+        self.root.after(100, self.update_plot)
+    
 
     def save_yaml_file(self):
         if hasattr(self, 'yaml_editor'):
@@ -412,4 +439,33 @@ class ExperimentGUI:
         self.experiment.GUI.criterion.set(self.criterion.get())
         self.experiment.GUI.simulating_electrode.set(self.simulating_electrode.get())
         self.experiment.GUI.experiment_type.set(self.experiment_type.get())
+        if hasattr(self, 'fig'):
+            self.experiment.GUI.fig = self.fig
+            self.experiment.GUI.ax = self.ax
         self.log_message("Parameters updated successfully.")
+
+    def init_plot(self):
+                # Create a figure for plotting
+        self.figure = Figure(figsize=(5, 4), dpi=100)
+        self.ax = self.figure.add_subplot(111)
+        self.ax.set_title("Real-time Learning Curve")
+        self.ax.set_xlabel("Iteration")
+        self.ax.set_ylabel("Time to reach criterion")
+        
+        # Add the figure to a new window
+        self.plot_window = tk.Toplevel(self.root)
+        self.plot_window.title("Real-time Data Plot")
+        
+            # Set window geometry to position it at the top-right corner
+        window_width = 500  # Set desired width of the window
+        window_height = 400  # Set desired height of the window
+        screen_width = self.root.winfo_screenwidth()
+        x_coordinate = screen_width - window_width - 20  # 20 pixels for a small margin
+        y_coordinate = 20  # 20 pixels from the top
+
+        self.plot_window.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
+
+        self.canvas = FigureCanvasTkAgg(self.figure, master=self.plot_window)
+        self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        self.canvas.draw()
+        

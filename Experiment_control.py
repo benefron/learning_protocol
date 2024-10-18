@@ -14,7 +14,7 @@ from Calculations_functions import *
 # 3. Run the acquistion protocol (threaded)
 # 4. Run the calculations and visulaization based on the recorded data
 #matplotlib.use('macosx')
-matplotlib.use('Qt5Agg')
+#matplotlib.use('Qt5Agg')
 
 
 class ExperimentControl:
@@ -102,26 +102,28 @@ class ExperimentControl:
         # upload configurations to chip
 
         # Run the batch in iteration with the right timings and monitor reaching the criteria
-        
+
         #TODO simulation of running the experiment 
-        for iteration in range(30):
+        for iteration in range(60):
             criteria_count = []
-            for t in range(1000):
-                vector = Single_electrode()
-                time.sleep(0.5)
-                event_in_time = check_crossing(self.GUI.yaml_recording, vector)
+            repition_number = 2000;
+            for t in range(repition_number):
+                vector = Single_electrode(t,iteration)
+                yaml_path = self.GUI.yaml_recording.get()
+                event_in_time = check_crossing(yaml_path, vector)
                 # calculate if has a threshold crossing event at 40-60ms after the stimulation
                 if len(criteria_count) >= 10:
                     criteria_count.pop(0)
                 criteria_count.append(event_in_time)
-                criteria_count_np = np.array(criteria_count).sum()/10
-                if criteria_count_np >= 2/10:
-                    self.GUI.log_message(f'Criteria reached after [t] seconds')
-                    plt.plot(iteration,t)
+                criteria_count_np = np.array(criteria_count).sum()
+                if criteria_count_np/10 >= 2/10:
+                    self.GUI.log_message(f'Criteria reached after {t} seconds')
+                    data = [iteration, t]
+                    self.GUI.plot_queue.put(data)
                     break
-                else:
+                elif t == repition_number - 1:
                     self.GUI.log_message('Criteria not reached in time')
-
+            time.sleep(1)    
         
 
     def stop_acquistion(self):
