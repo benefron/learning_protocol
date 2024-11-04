@@ -112,6 +112,8 @@ class ExperimentControl:
                 for t in range(repition_number):
                     if not stop_acq.is_set():
                         vector = Single_electrode(t,iteration)
+                        if self.GUI.experiment_type.get() == 'Control':
+                            vector = Single_electrode(0,75)
                         yaml_path = self.GUI.yaml_recording.get()
                         event_in_time = check_crossing(yaml_path, vector)
                         # calculate if has a threshold crossing event at 40-60ms after the stimulation
