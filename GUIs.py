@@ -207,6 +207,7 @@ class ExperimentGUI:
         self.enable_inputs()
         self.log_message("Experiment stopped")
         self.quit_button.config(state='normal')
+        self.experiment_type_menu.config(state='normal')
 
         # Save the log when stopping the experiment
         self.save_log()
