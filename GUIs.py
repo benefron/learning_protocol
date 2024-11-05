@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import numpy as np
+from electrode_select_GUI import GridSelector
 
 class ExperimentGUI:
     def __init__(self, root ):
@@ -39,7 +40,7 @@ class ExperimentGUI:
         self.max_time = tk.IntVar(value=10)
         self.rest_time = tk.IntVar(value=10)
         self.criterion = tk.IntVar(value=2)
-        self.simulating_electrode = tk.IntVar(value=120)
+        self.simulating_electrode = tk.Variable(value=[120])
         self.target_electrode = tk.StringVar(value="")  # New field for target electrode
         self.experiment_type = tk.StringVar(value="Experiment")
         self.path = tk.StringVar(value="")
@@ -48,6 +49,7 @@ class ExperimentGUI:
         self.exp_path_streaming = tk.StringVar(value="")
         self.yaml_basline = tk.StringVar(value="")
         self.yaml_recording = tk.StringVar(value="")
+        self.stimualtion_rate = tk.IntVar(value=1)
 
         # Create input fields
         self.create_input_fields()
@@ -108,9 +110,12 @@ class ExperimentGUI:
 
         tk.Label(self.left_frame, text="Criterion (R/S):").pack(anchor='w')
         tk.Entry(self.left_frame, textvariable=self.criterion, width=10).pack(anchor='w')
+        
+        tk.Label(self.left_frame, text="Stim rate (Hz):").pack(anchor='w')
+        tk.Entry(self.left_frame, textvariable=self.stimualtion_rate, width=10).pack(anchor='w')
 
-        tk.Label(self.left_frame, text="Simulating Electrode:").pack(anchor='w')
-        tk.Entry(self.left_frame, textvariable=self.simulating_electrode, width=10).pack(anchor='w')
+        #tk.Label(self.left_frame, text="Simulating Electrode:").pack(anchor='w')
+        #tk.Entry(self.left_frame, textvariable=self.simulating_electrode, width=10).pack(anchor='w')
 
 
         tk.Label(self.left_frame, text="Experiment Type:").pack(anchor='w')
@@ -119,6 +124,9 @@ class ExperimentGUI:
         self.experiment_type_menu.pack(anchor='w')
 
     def create_buttons(self):
+        self.stimualtion_button = tk.Button(self.left_frame, text="Choose stimulation electrode(s)", command=self.stimulate)
+        self.stimualtion_button.pack(anchor='w', pady=5)
+        
         self.start_button = tk.Button(self.right_frame, text="Start Experiment", command=self.start_experiment)
         self.start_button.pack(pady=5)
 
@@ -145,6 +153,20 @@ class ExperimentGUI:
         tk.Label(self.right_frame, text="Path storage (slow):").pack(anchor='w', pady=5)
         self.path_save_label = tk.Label(self.right_frame, textvariable=self.path_save)
         self.path_save_label.pack(anchor='w')
+        
+        
+    def stimulate(self):
+        def open_grid_selector():
+            root = tk.Tk()
+            app = GridSelector(root, self.set_simulating_electrode)
+            root.mainloop()
+        
+        threading.Thread(target=open_grid_selector).start()
+
+    def set_simulating_electrode(self, selected_cells):
+        self.simulating_electrode.set(selected_cells)
+        self.log_message(f"Selected cells: {self.simulating_electrode.get()}")
+        
 
     def start_experiment(self):
         if self.path_save.get():
@@ -200,7 +222,7 @@ class ExperimentGUI:
         self.running = False
         
         #if self.experiment_thread is not None:
-          #  self.experiment_thread.join()  # Ensure the thread has completed
+        #  self.experiment_thread.join()  # Ensure the thread has completed
         self.start_button.config(state='normal')
         self.load_path_button.config(state='normal')
         self.load_path_button_storage.config(state='normal')
