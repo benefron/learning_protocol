@@ -161,7 +161,8 @@ class ExperimentGUI:
             app = GridSelector(root, self.set_simulating_electrode)
             root.mainloop()
         
-        threading.Thread(target=open_grid_selector).start()
+        #threading.Thread(target=open_grid_selector).start()
+        open_grid_selector()
 
     def set_simulating_electrode(self, selected_cells):
         self.simulating_electrode.set(selected_cells)
