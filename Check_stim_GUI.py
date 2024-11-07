@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QGridLayout, QWidget
 import sys
 import pyqtgraph as pg
+import numpy as np
 
 # Define the main window class
 class PyQtWindow(QMainWindow):
@@ -20,7 +21,8 @@ class PyQtWindow(QMainWindow):
         self.plot_widget = pg.PlotWidget(self)
         self.plot_widget.setGeometry(300, 50, 650, 700)  # Set plot widget size and position
         self.plot_widget.setBackground('w')  # Set background to white
-        self.plot_widget.addLine(x=self.stim_time, pen=pg.mkPen('r', width=2))  # Add a red line at stim_time
+        self.plot_widget.showAxis('left', show=False)  # Hide the y-axis
+        self.plot_widget.addLine(x=self.stim_time/30000, pen=pg.mkPen('r', width=2))  # Add a red line at stim_time
 
         # Create and configure the clear button
         self.clear_button = QPushButton('Clear', self)
@@ -67,23 +69,35 @@ class PyQtWindow(QMainWindow):
                 self.remove_trace(index)  # Remove trace from plot
             else:
                 self.selected_squares.add(index)  # Add index to selected squares
+                self.plot_widget.clear()  # Clear the plot
+                self.plot_widget.addLine(x=self.stim_time/30000, pen=pg.mkPen('r', width=2))  # Add red line at stim_time
+                sorted_squares = sorted(self.selected_squares)  # Sort selected squares
                 button.setStyleSheet("background-color: green; border: 1px solid black")  # Set button color to green
-                self.add_trace(index)  # Add trace to plot
+                self.count = 0
+                for idx in sorted_squares:
+                    self.add_trace(idx)  # Add trace to plot
+                    self.count += 1
         return toggle
 
     # Add a trace to the plot
     def add_trace(self, index):
         trace = self.activity_mat[index - 1]  # Get trace data
-        offset = len(self.selected_squares) * 5  # Calculate offset
-        self.plot_widget.plot(trace + offset, pen=pg.mkPen('b', width=1))  # Plot trace with offset
+        offset = self.count * 5  # Calculate offset
+        time_vector = np.linspace(0,len(trace),len(trace))/30000 # Create time vector
+        self.plot_widget.plot(time_vector,trace + offset, pen=pg.mkPen('b', width=1))  # Plot trace with offset
 
     # Remove a trace from the plot
     def remove_trace(self, index):
         self.plot_widget.clear()  # Clear the plot
-        self.plot_widget.addLine(x=self.stim_time, pen=pg.mkPen('r', width=2))  # Add red line at stim_time
+        self.plot_widget.addLine(x=self.stim_time/30000, pen=pg.mkPen('r', width=2))  # Add red line at stim_time
         self.selected_squares.discard(index)  # Remove the index from selected squares
-        for idx in self.selected_squares:
+        selected_squares_copy = sorted(self.selected_squares)  # Create a copy of selected squares
+        self.selected_squares.clear()  # Clear selected squares
+        self.count = 0
+        for idx in selected_squares_copy:
+            self.selected_squares.add(idx)  # Re-add selected squares to update the plot
             self.add_trace(idx)  # Re-add traces for remaining selected squares
+            self.count += 1
 
     # Clear the plot and reset button states
     def clear_plot(self):
