@@ -15,11 +15,11 @@ class PyQtWindow(QMainWindow):
 
     def initUI(self):
         self.setWindowTitle("Single stimulation")  # Set window title
-        self.setGeometry(100, 100, 1000, 800)  # Set window size and position
+        self.setGeometry(1, 1, 1600, 800)  # Set window size and position
 
         # Create and configure the plot widget
         self.plot_widget = pg.PlotWidget(self)
-        self.plot_widget.setGeometry(300, 50, 650, 700)  # Set plot widget size and position
+        self.plot_widget.setGeometry(500, 50, 850, 700)  # Set plot widget size and position
         self.plot_widget.setBackground('w')  # Set background to white
         self.plot_widget.showAxis('left', show=False)  # Hide the y-axis
         self.plot_widget.addLine(x=self.stim_time/30000, pen=pg.mkPen('r', width=2))  # Add a red line at stim_time
@@ -37,7 +37,7 @@ class PyQtWindow(QMainWindow):
         # Create and configure the grid layout
         self.grid_layout = QGridLayout()
         self.grid_widget = QWidget(self)
-        self.grid_widget.setGeometry(50, 50, 200, 200)  # Set grid widget size and position
+        self.grid_widget.setGeometry(50, 50, 350, 350)  # Set grid widget size and position
         self.grid_widget.setLayout(self.grid_layout)
 
         # Create buttons for the grid
