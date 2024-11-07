@@ -85,6 +85,11 @@ class PyQtWindow(QMainWindow):
         offset = self.count * 5  # Calculate offset
         time_vector = np.linspace(0,len(trace),len(trace))/30000 # Create time vector
         self.plot_widget.plot(time_vector,trace + offset, pen=pg.mkPen('b', width=1))  # Plot trace with offset
+        electrode_text = pg.TextItem(text=f'{index}', color='k')  # Create text item for electrode number
+        electrode_text.setPos(-0.05, np.median(trace) + offset)  # Set position of text item
+        electrode_text.setFont(pg.QtGui.QFont("Arial", 15))
+        electrode_text.setAnchor((0.5, 0.5))  # Set text alignment to middle
+        self.plot_widget.addItem(electrode_text)  # Add text item to plot
 
     # Remove a trace from the plot
     def remove_trace(self, index):
