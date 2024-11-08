@@ -13,6 +13,151 @@ import numpy as np
 from electrode_select_GUI import GridSelector
 
 class ExperimentGUI:
+    """
+    A class to create and manage the GUI for an experiment.
+    Attributes:
+    -----------
+    root : tk.Tk
+        The root window of the GUI.
+    chip_number : str
+        The chip number used in the experiment.
+    chosen_electrode : str
+        The chosen electrode for the experiment.
+    well_number : tk.IntVar
+        The well number for the experiment.
+    max_time : tk.IntVar
+        The maximum time for the experiment in minutes.
+    rest_time : tk.IntVar
+        The rest time for the experiment in minutes.
+    criterion : tk.IntVar
+        The criterion for the experiment.
+    simulating_electrode : tk.Variable
+        The simulating electrode for the experiment.
+    target_electrode : tk.StringVar
+        The target electrode for the experiment.
+    experiment_type : tk.StringVar
+        The type of experiment.
+    path : tk.StringVar
+        The path for streaming data.
+    path_save : tk.StringVar
+        The path for saving data.
+    exp_path_storage : tk.StringVar
+        The storage path for the experiment.
+    exp_path_streaming : tk.StringVar
+        The streaming path for the experiment.
+    yaml_basline : tk.StringVar
+        The path to the baseline YAML configuration file.
+    yaml_recording : tk.StringVar
+        The path to the recording YAML configuration file.
+    stimualtion_rate : tk.IntVar
+        The stimulation rate for the experiment.
+    log_queue : queue.Queue
+        Queue for thread-safe logging.
+    plot_queue : queue.Queue
+        Queue for plotting data.
+    stop_event : threading.Event
+        Event to control experiment run and clock update.
+    running : bool
+        Flag to indicate if the experiment is running.
+    experiment_thread : threading.Thread
+        Thread to run the experiment.
+    experiment : ExperimentControl
+        The experiment control object.
+    chip_number_label : tk.Label
+        Label to display the chip number.
+    electorde_label : tk.Label
+        Label to display the target electrode.
+    clock_label : tk.Label
+        Label to display the elapsed time.
+    message_area : tk.Text
+        Text area to display messages.
+    left_frame : tk.Frame
+        Frame for the left side of the GUI.
+    right_frame : tk.Frame
+        Frame for the right side of the GUI.
+    bottom_frame : tk.Frame
+        Frame for the bottom of the GUI.
+    experiment_type_menu : tk.OptionMenu
+        Drop-down menu for selecting the experiment type.
+    stimualtion_button : tk.Button
+        Button to choose stimulation electrode(s).
+    start_button : tk.Button
+        Button to start the experiment.
+    stop_button : tk.Button
+        Button to stop the experiment.
+    load_path_button : tk.Button
+        Button to load the streaming path.
+    load_path_button_storage : tk.Button
+        Button to load the storage path.
+    open_yaml_button : tk.Button
+        Button to open the YAML configuration files.
+    quit_button : tk.Button
+        Button to quit the GUI.
+    path_label : tk.Label
+        Label to display the streaming path.
+    path_save_label : tk.Label
+        Label to display the storage path.
+    figure : Figure
+        Figure for plotting data.
+    ax : Axes
+        Axes for the plot.
+    plot_window : tk.Toplevel
+        Window for displaying the plot.
+    canvas : FigureCanvasTkAgg
+        Canvas for the plot.
+    Methods:
+    --------
+    __init__(self, root):
+        Initializes the GUI and sets up the layout and widgets.
+    create_input_fields(self):
+        Creates the input fields for the experiment parameters.
+    create_buttons(self):
+        Creates the buttons for the GUI.
+    stimulate(self):
+        Opens the grid selector for choosing stimulation electrodes.
+    set_simulating_electrode(self, selected_cells):
+        Sets the simulating electrode based on the selected cells.
+    start_experiment(self):
+        Starts the experiment and sets up the necessary directories and parameters.
+    stop_experiment(self):
+        Stops the experiment and saves the log and parameters.
+    load_path(self):
+        Loads the streaming path.
+    load_path_storage(self):
+        Loads the storage path and copies the YAML configuration files.
+    disable_inputs(self):
+        Disables the input fields.
+    enable_inputs(self):
+        Enables the input fields.
+    update_clock(self):
+        Updates the clock to display the elapsed time.
+    run_experiment(self):
+        Runs the main protocol for the experiment.
+    log_message(self, message):
+        Logs a message to the message area in a thread-safe manner.
+    process_log_queue(self):
+        Processes the log queue and displays messages in the message area.
+    get_parameters(self):
+        Returns the current parameters as a dictionary.
+    dest_status(self):
+        Returns the running status of the experiment.
+    save_parameters(self):
+        Saves the current parameters to a file.
+    save_log(self):
+        Saves the contents of the message area to a log file.
+    open_yaml_file(self):
+        Opens a YAML configuration file.
+    update_plot(self):
+        Updates the plot with new data.
+    save_yaml_file(self):
+        Saves the YAML configuration file.
+    show_yaml_editor(self, content):
+        Displays the YAML editor with the given content.
+    update_parameters_experiment(self):
+        Updates the parameters for the experiment.
+    init_plot(self):
+        Initializes the plot for displaying data.
+    """
     def __init__(self, root ):
         self.root = root
         self.root.title("Experiment GUI")
@@ -161,7 +306,8 @@ class ExperimentGUI:
             app = GridSelector(root, self.set_simulating_electrode)
             root.mainloop()
         
-        threading.Thread(target=open_grid_selector).start()
+        #threading.Thread(target=open_grid_selector).start()
+        open_grid_selector()
 
     def set_simulating_electrode(self, selected_cells):
         self.simulating_electrode.set(selected_cells)

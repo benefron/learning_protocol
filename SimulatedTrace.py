@@ -37,10 +37,9 @@ def insert_peaks(max_num_peaks=2, peak_length=20, peak_height=2, iteration_numer
 def vector_to_matrix(elec_num):
     for i in range(elec_num):
         if i == 0:
-            matrix = insert_peaks()
+            matrix = insert_peaks(max_num_peaks=5 , peak_length=20, peak_height=2,iteration_numer=65, repition=0)
         else:
-            matrix = np.vstack((matrix, insert_peaks())) 
-
+            matrix = np.vstack((matrix, insert_peaks(max_num_peaks=5 , peak_length=20, peak_height=2,iteration_numer=65, repition=0))) 
     return matrix
     
 
