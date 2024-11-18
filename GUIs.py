@@ -421,12 +421,12 @@ class ExperimentGUI:
 
     def disable_inputs(self):
         for widget in self.left_frame.winfo_children():
-            if isinstance(widget, tk.Entry) or isinstance(widget, tk.Radiobutton):
+            if isinstance(widget, (tk.Entry, tk.Radiobutton)):
                 widget.config(state='disabled')
 
     def enable_inputs(self):
         for widget in self.left_frame.winfo_children():
-            if isinstance(widget, tk.Entry) or isinstance(widget, tk.Radiobutton):
+            if isinstance(widget, (tk.Entry, tk.Radiobutton)):
                 widget.config(state='normal')
 
     def update_clock(self):

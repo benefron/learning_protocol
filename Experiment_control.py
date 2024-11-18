@@ -104,39 +104,37 @@ class ExperimentControl:
 
         # Run the batch in iteration with the right timings and monitor reaching the criteria
 
-        #TODO simulation of running the experiment 
+        #TODO simulation of running the experiment
         for iteration in range(30):
             if not stop_acq.is_set():
                 criteria_count = []
                 repition_number = 3000;
                 for t in range(repition_number):
-                    if not stop_acq.is_set():
-                        vector = Single_electrode(t,iteration)
-                        if self.GUI.experiment_type.get() == 'Control':
-                            vector = Single_electrode(0,75)
-                        yaml_path = self.GUI.yaml_recording.get()
-                        event_in_time = check_crossing(yaml_path, vector)
-                        # calculate if has a threshold crossing event at 40-60ms after the stimulation
-                        if len(criteria_count) >= 10:
-                            criteria_count.pop(0)
-                        criteria_count.append(event_in_time)
-                        criteria_count_np = np.array(criteria_count).sum()
-                        if criteria_count_np/10 >= self.GUI.criterion.get()/10:
-                            self.GUI.log_message(f'Criteria reached after {t} seconds')
-                            data = [iteration, t]
-                            self.GUI.plot_queue.put(('experiment',data))
-                            break
-                        elif t == repition_number - 1:
-                            self.GUI.log_message('Criteria not reached in time')
-                    else:
+                    if stop_acq.is_set():
                         break
-                time.sleep(1) 
+                    vector = Single_electrode(t,iteration)
+                    if self.GUI.experiment_type.get() == 'Control':
+                        vector = Single_electrode(0,75)
+                    yaml_path = self.GUI.yaml_recording.get()
+                    event_in_time = check_crossing(yaml_path, vector)
+                    # calculate if has a threshold crossing event at 40-60ms after the stimulation
+                    if len(criteria_count) >= 10:
+                        criteria_count.pop(0)
+                    criteria_count.append(event_in_time)
+                    criteria_count_np = np.array(criteria_count).sum()
+                    if criteria_count_np/10 >= self.GUI.criterion.get()/10:
+                        self.GUI.log_message(f'Criteria reached after {t} seconds')
+                        data = [iteration, t]
+                        self.GUI.plot_queue.put(('experiment',data))
+                        break
+                    elif t == repition_number - 1:
+                        self.GUI.log_message('Criteria not reached in time')
+                time.sleep(1)
             else:
                 self.stop_acquistion()
                 time.sleep(0.5)
                 self.GUI.log_message('Experiment stopped')
-                break
-               
+                break           
         
 
     def stop_acquistion(self):

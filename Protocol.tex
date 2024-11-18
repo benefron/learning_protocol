@@ -1,0 +1,168 @@
+\documentclass{article}
+\usepackage{geometry}
+\geometry{a4paper,total={170mm,257mm},left=20mm,top=20mm,right = 20mm}
+
+\title{Experiment Protocol}
+\author{Ben Efron}
+\date{November 2024}
+
+\begin{document}
+
+
+\title{Experiment Protocol}
+\author{Ben Efron}
+\date{November 2024}
+
+\begin{document}
+
+\maketitle
+
+\section{Overview}
+% Write the overview and workflow of the entire experiment protocol here.
+This is an experiment protocol to induce learning on a high-definition multielectorde array (HD-MEA) produced by \textit{Imec}, and to define the changes in the network activity following the learning. The learning protocol is based on the paper by \textit{Shahaf and Marom, 2002}. We will replicate their work on a \textbf{HD-MEA} which allows recording from many neurons with a very high resolution. The \textbf{HD-MEA} will allow us to extend on the work done \textit{Shahaf and Marom, 2002}, by giving us access to the activity and connectivity of the entire network of cultured neurons. We aim to define the neuronal network in fine details and estimate the changes induced on the network by learning. We aim to shed light on mechanisms that underline such learning, providing insights on how neuronal networks learn.
+
+\section{Protocol}
+% What should be in the base line recording
+\begin{itemize}
+    \item Baseline Recording
+    \item Stimulation Recording
+    \item baseline post stimulation
+    \item Learning Protocol
+    \item Post Learning Baseline
+    \item Post Learning Stimulation
+    \item Post stimulation baseline
+\end{itemize}
+
+\section{Protocol Details}
+
+\subsection{Baseline Recording}
+% Describe what should be included in the baseline recording here.
+The \textbf{baseline recording} is the first step in the experiment protocol.
+We evaluate the baseline activity of the neuronal network before any stimulation or learning is applied.
+We will repeat this step at different stages of the experiment to compare the activity after manipulations.
+We will record 30 minutes of activity from all the available 16 wells to evaluate the activity f the entire network.
+We need to create based on the baseline.yaml file a baseline recording protocol in the sparrow app that will include the following parameters:
+\begin{itemize}
+    \item Create a new configuration file
+    \item 4 configuration maps encompassing all the 16 wells
+    \item Create a recording configuration
+    \item Create a batch recording element
+    \item Set reference electrode
+    \item Create the mux maps
+    \item Create the batch sweep with all cfgmaps
+    \item Create a time line with a timeline delay of 30 minutes
+    \item Save locally the configuration file
+\end{itemize}
+This settings will repeat at the different stages of the experiment to evaluate the activity of the network.
+The settings can be reactivated and recalled to the sparrow app.
+The baseline recording should be loaded to the sparrow app:
+\begin{itemize}
+    \item Load the configuration file
+    \item activate the chip
+    \item load settings to the chip
+    \item start the recording
+    \item stop the recording
+    \item deactivate the chip
+    \item move the recording to the storage device
+\end{itemize}
+
+
+
+\subsection{Stimulation Recording}
+% Describe what should be included in the stimulation recording here.
+
+\subsection{Baseline Post Stimulation}
+% Describe what should be included in the baseline post stimulation here.
+
+\subsection{Learning Protocol}
+% Describe what should be included in the learning protocol here.
+
+\subsection{Post Learning Baseline}
+% Describe what should be included in the post learning baseline here.
+
+\subsection{Post Learning Stimulation}
+% Describe what should be included in the post learning stimulation here.
+
+\subsection{Post Stimulation Baseline}
+% Describe what should be included in the post stimulation baseline here.
+
+\section{How to run the experiment}
+% Details with screenshots on how to run the experiment.
+
+\end{document}
+\maketitle
+
+\section{Overview}
+% Write the overview and workflow of the entire experiment protocol here.
+This is an experiment protocol to induce learning on a high-definition multielectorde array (HD-MEA) produced by \textit{Imec}, and to define the changes in the network activity following the learning. The learning protocol is based on the paper by \textit{Shahaf and Marom, 2002}. We will replicate their work on a \textbf{HD-MEA} which allows recording from many neurons with a very high resolution. The \textbf{HD-MEA} will allow us to extend on the work done \textit{Shahaf and Marom, 2002}, by giving us access to the activity and connectivity of the entire network of cultured neurons. We aim to define the neuronal network in fine details and estimate the changes induced on the network by learning. We aim to shed light on mechanisms that underline such learning, providing insights on how neuronal networks learn.
+
+\section{Protocol}
+% What should be in the base line recording
+\begin{itemize}
+    \item Baseline Recording
+    \item Stimulation Recording
+    \item baseline post stimulation
+    \item Learning Protocol
+    \item Post Learning Baseline
+    \item Post Learning Stimulation
+    \item Post stimulation baseline
+\end{itemize}
+
+\section{Protocol Details}
+
+\subsection{Baseline Recording}
+% Describe what should be included in the baseline recording here.
+The \textbf{baseline recording} is the first step in the experiment protocol.
+We evaluate the baseline activity of the neuronal network before any stimulation or learning is applied.
+We will repeat this step at different stages of the experiment to compare the activity after manipulations.
+We will record 30 minutes of activity from all the available 16 wells to evaluate the activity f the entire network.
+We need to create based on the baseline.yaml file a baseline recording protocol in the sparrow app that will include the following parameters:
+\begin{itemize}
+    \item Create a new configuration file
+    \item 4 configuration maps encompassing all the 16 wells
+    \item Create a recording configuration
+    \item Create a batch recording element
+    \item Set reference electrode
+    \item Create the mux maps
+    \item Create the batch sweep with all cfgmaps
+    \item Create a time line with a timeline delay of 30 minutes
+    \item Save locally the configuration file
+\end{itemize}
+This settings will repeat at the different stages of the experiment to evaluate the activity of the network.
+The settings can be reactivated and recalled to the sparrow app.
+The baseline recording should be loaded to the sparrow app:
+\begin{itemize}
+    \item Load the configuration file
+    \item activate the chip
+    \item load settings to the chip
+    \item start the recording
+    \item stop the recording
+    \item deactivate the chip
+    \item move the recording to the storage device
+\end{itemize}
+
+
+
+
+\subsection{Stimulation Recording}
+% Describe what should be included in the stimulation recording here.
+
+\subsection{Baseline Post Stimulation}
+% Describe what should be included in the baseline post stimulation here.
+
+\subsection{Learning Protocol}
+% Describe what should be included in the learning protocol here.
+
+\subsection{Post Learning Baseline}
+% Describe what should be included in the post learning baseline here.
+
+\subsection{Post Learning Stimulation}
+% Describe what should be included in the post learning stimulation here.
+
+\subsection{Post Stimulation Baseline}
+% Describe what should be included in the post stimulation baseline here.
+
+\section{How to run the experiment}
+% Details with screenshots on how to run the experiment.
+
+\end{document}
