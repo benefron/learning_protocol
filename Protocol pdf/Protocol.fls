@@ -1,8 +1,8 @@
-PWD c:/Users/efron01/Documents/learning_protocol
+PWD c:/Users/efron01/Documents/learning_protocol/Protocol pdf
 INPUT c:/texlive/2024/texmf.cnf
 INPUT c:/texlive/2024/texmf-dist/web2c/texmf.cnf
 INPUT c:/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt
-INPUT c:/Users/efron01/Documents/learning_protocol/Protocol.tex
+INPUT c:/Users/efron01/Documents/learning_protocol/Protocol pdf/Protocol.tex
 OUTPUT Protocol.log
 INPUT c:/texlive/2024/texmf-dist/tex/latex/base/article.cls
 INPUT c:/texlive/2024/texmf-dist/tex/latex/base/article.cls
