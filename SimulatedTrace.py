@@ -39,7 +39,7 @@ def vector_to_matrix(elec_num):
         if i == 0:
             matrix = insert_peaks(max_num_peaks=5 , peak_length=20, peak_height=2,iteration_numer=65, repition=0)
         else:
-            matrix = np.vstack((matrix, insert_peaks(max_num_peaks=5 , peak_length=20, peak_height=2,iteration_numer=65, repition=0))) ד
+            matrix = np.vstack((matrix, insert_peaks(max_num_peaks=5 , peak_length=20, peak_height=2,iteration_numer=65, repition=0)))
     return matrix
     
 
