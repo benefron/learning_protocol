@@ -1,71 +1,163 @@
 # Learning on MEA
 
-This repository holds the functions and protocol to run an experiment based on the work of *Shahaf and Marom 2001* testing the network activity of a neuronal culture on an MEA undergoing a stimulation protocol for uninstructed learning.
+A Python application for running an uninstructed learning experiment on neuronal cultures grown on a High-Density Multi-Electrode Array (HD-MEA), based on the protocol described in *Shahaf & Marom (2001)*.
 
-## Outline of Experiment
+---
 
-- Record ongoing activity on the entire chip to establish pre-learning baseline.
-- Running a stimulation protocol to identify target electrode and establish baseline response.
-- Choose electrode with **R/S < 1**.
-- Run the learning paradigm to reach **R/S < 2**.
-- If criteria is reached the protocol stops for 5 minutes.
-- After n > 30 repetitions (or if learning plateau reached).
-- Record ongoing activity on the entire chip to evaluate changes due to learning.
-- Run stimulation protocol and record from all chip to evaluate learning induced changes.
-- **Optional:** move to next active area to run protocol.
+## Background
+
+The experiment tests whether a neuronal network can be conditioned to respond to a stimulation electrode it initially ignores. A response-to-stimulus ratio (R/S) is used as the learning criterion: the network is considered to have learned when R/S drops below a defined threshold within a time window following each stimulation.
+
+---
+
+## Experiment Outline
+
+1. Record spontaneous activity across the full chip to establish a **pre-learning baseline**.
+2. Run a stimulation scan across electrodes to identify a suitable **target electrode** (R/S < 1).
+3. Run the **learning paradigm**: stimulate the target electrode repeatedly until the criterion R/S ≥ threshold is met within a sliding 10-trial window, or until 30 iterations are completed.
+4. After the learning phase, record spontaneous activity again to evaluate **learning-induced network changes**.
+5. Optionally repeat the protocol on another active area.
+
+---
 
 ## Project Structure
 
-- **`main.py`**: The entry point of the application. It initializes the GUI and starts the Tkinter main loop.
-- **`GUIs.py`**: Contains the `ExperimentGUI` class, which manages the graphical user interface for the experiment. It includes methods for logging, saving parameters, handling YAML files, and updating plots.
-- **`Experiment_control.py`**: Contains the `ExperimentControl` class, which manages the experiment's execution. It includes methods for generating Sparrow configurations, running baseline and experiment acquisitions, and handling stimulation protocols.
-- **`SimulatedTrace.py`**: Contains functions for generating simulated data traces, such as `insert_peaks` and `generate_random_vector`.
-- **`Calculations_functions.py`**: Contains functions for performing calculations on the recorded data.
-- **`SparrowRpcService.py`**: Contains the `SparrowRpcService` class, which provides an API for communicating with the Sparrow application using gRPC.
-- **`contracts.proto`**: Defines the gRPC service and messages used for communication between the client and the Sparrow application.
-- **`contracts_pb2.py` and `contracts_pb2_grpc.py`**: Generated gRPC code based on `contracts.proto`.
-- **`README.md`**: Provides an overview of the experiment and the project files.
-- **`Protocol.tex`**: A LaTeX document describing the experiment protocol in detail.
+```
+learning_protocol/
+├── main.py                  # Entry point — initializes the GUI and starts the Tkinter event loop
+├── GUIs.py                  # ExperimentGUI class — full Tkinter-based control panel
+├── Experiment_control.py    # ExperimentControl class — orchestrates the acquisition and stimulation protocol
+├── Calculations_functions.py# Signal analysis: threshold crossing detection
+├── SimulatedTrace.py        # Simulated neural trace generators for offline testing
+├── SparrowRpcService.py     # gRPC client API for the Sparrow HD-MEA application
+├── electrode_select_GUI.py  # 16×16 grid GUI for selecting stimulation electrodes
+├── Check_stim_GUI.py        # PyQt stimulation checker GUI
+├── Sparrow_com.py           # Low-level Sparrow communication helpers
+├── Baseline_cfg.yaml        # Configuration for baseline (no-stimulation) recordings
+├── Recording_cfg.yaml       # Configuration for stimulation recordings and analysis
+└── PythonGRpcClient/        # Standalone gRPC client library and demos (see its own README)
+```
 
-## Key Components and Their Roles
+---
 
-### Graphical User Interface (GUI)
-- The `ExperimentGUI` class in `GUIs.py` creates and manages the GUI for the experiment. It includes input fields for experiment parameters, buttons for starting and stopping the experiment, and areas for logging messages and displaying plots.
-- Methods like `get_parameters`, `save_parameters`, `save_log`, and `open_yaml_file` handle user interactions and file operations.
+## Requirements
 
-### Experiment Control
-- The `ExperimentControl` class in `Experiment_control.py` manages the experiment's execution, including running baseline and experiment acquisitions and handling stimulation protocols.
-- Methods like `run_basleine`, `run_preExperiment_stimulation`, and `run_Experiment_stimulation` simulate the experiment's execution and log messages to the GUI.
+- Python 3.10+
+- `grpcio` and `grpcio-tools`
+- `numpy`, `pandas`
+- `matplotlib`
+- `PyYAML`
+- `tkinter` (included with standard Python on Windows/macOS)
+- A running instance of the **Sparrow HD-MEA application** (for live acquisition)
 
-### Simulated Data
-- The `SimulatedTrace.py` file contains functions for generating simulated data traces, such as `insert_peaks` and `generate_random_vector`. These functions are used to create synthetic data for testing and visualization purposes.
+Install Python dependencies:
 
-### Calculations
-- The `Calculations_functions.py` file contains functions for performing calculations on the recorded data. These functions are used to analyze the data and evaluate the experiment's results.
+```bash
+pip install grpcio grpcio-tools numpy pandas matplotlib pyyaml
+```
 
-### Sparrow Communication
-- The `SparrowRpcService.py` file contains the `SparrowRpcService` class, which provides an API for communicating with the Sparrow application using gRPC. This class includes methods for various operations, such as starting and stopping acquisitions, creating configurations, and exporting data.
-- The `contracts.proto` file defines the gRPC service and messages used for communication between the client and the Sparrow application. The `contracts_pb2.py` and `contracts_pb2_grpc.py` files are generated gRPC code based on `contracts.proto`.
+---
 
-### Experiment Protocol
-- The `Protocol.tex` file is a LaTeX document that describes the experiment protocol in detail. It includes sections on the experiment's overview, baseline recording, stimulation recording, and learning protocol.
+## Quick Start
 
-## Workflow
+1. Set the default data path in the Sparrow application to your intended **streaming path** (fast, local SSD).
+2. Launch the GUI:
+   ```bash
+   python main.py
+   ```
+3. In the GUI:
+   - Click **Load Storage Path** — this sets the slow-storage destination and copies the YAML config files there.
+   - Click **Load Stream Path** — this sets the fast-streaming destination.
+   - Optionally click **Open Configurations** to review or edit the copied YAML files before the run.
+   - Click **Choose stimulation electrode(s)** to select electrodes on the 16×16 grid.
+   - Adjust experiment parameters (well number, max time, rest time, criterion, stimulation rate, experiment type).
+   - Click **Start Experiment**.
 
-### Initialization
-- The `main.py` script initializes the GUI and starts the Tkinter main loop.
-- The user interacts with the GUI to set experiment parameters and start the experiment.
+---
 
-### Experiment Execution
-- The `ExperimentControl` class manages the experiment's execution, including running baseline and experiment acquisitions and handling stimulation protocols.
-- Simulated data is generated using functions from `SimulatedTrace.py`.
+## Configuration Files
 
-### Data Analysis
-- Calculations are performed on the recorded data using functions from `Calculations_functions.py`.
-- Results are displayed in the GUI and logged for further analysis.
+### `Baseline_cfg.yaml`
+Controls the full-chip spontaneous-activity recording (no stimulation).
 
-### Communication with Sparrow
-- The `SparrowRpcService` class provides an API for communicating with the Sparrow application using gRPC.
-- The experiment protocol is defined in `Protocol.tex` and followed during the experiment.
+| Key | Description |
+|---|---|
+| `main_cfg.config_name` | Name of the Sparrow configuration |
+| `main_cfg.map_number` | Electrode map to use |
+| `main_cfg.Stim` | Must be `False` for baseline |
+| `Rec_cfg.rec_length_map` | Recording duration in seconds |
+| `Rec_cfg.Gain` | Recording amplifier gain |
 
-This project provides a comprehensive framework for running and analyzing experiments on neuronal network activity using an HD-MEA.
+### `Recording_cfg.yaml`
+Controls the stimulation recording and the analysis window.
+
+| Key | Description |
+|---|---|
+| `main_cfg.map_number` | Electrode map to use |
+| `main_cfg.Stim` | Must be `True` for stimulation runs |
+| `Rec_cfg.rec_length_map` | Recording duration per map in seconds |
+| `stim_cfg.time_before` | Pre-stimulus padding (s) |
+| `stim_cfg.time_after` | Post-stimulus recording window (s) |
+| `stim_cfg.stimulation_length` | Stimulus pulse duration (s) |
+| `stim_cfg.stim_amp` | Stimulus amplitude (mV) |
+| `time_window_settings.start_time` | Start of the response analysis window relative to stimulus onset (s) |
+| `time_window_settings.end_time` | End of the response analysis window (s) |
+| `calculations.threshold_scaling` | RMS multiplier used to define the spike-detection threshold |
+
+---
+
+## Key Components
+
+### `GUIs.py` — `ExperimentGUI`
+The main control panel. Handles all user interaction, directory creation, thread management, real-time logging, and live plotting. On start, it:
+- Creates timestamped experiment directories under the streaming and storage paths.
+- Spawns the experiment thread (`run_experiment`) and a clock-update thread.
+- Polls a `log_queue` and a `plot_queue` every 100 ms to update the GUI safely from background threads.
+
+### `Experiment_control.py` — `ExperimentControl`
+Orchestrates the three-phase protocol:
+- `run_basleine` — runs a timed baseline acquisition, checking for a stop signal every second.
+- `run_preExperiment_stimulation` — scans electrodes to produce a pre-experiment stimulation trace.
+- `run_Experiment_stimulation` — iterates up to 30 learning trials, evaluating the R/S criterion with a 10-trial sliding window.
+
+> **Note:** gRPC calls to the Sparrow application are currently stubbed out with `#FIXME` comments. The experiment runs in simulation mode using `SimulatedTrace.py`.
+
+### `Calculations_functions.py`
+- `check_crossing(file_path, vector)` — reads thresholding parameters from a YAML file and returns `True` if the signal crosses the RMS-scaled threshold within the configured analysis window (sampled at 30 kHz).
+
+### `SimulatedTrace.py`
+Generates synthetic neural traces for offline development and testing:
+- `generate_random_vector` — uniform noise baseline.
+- `insert_peaks` — adds simulated spike peaks with learning-dependent probability (more consistent responses at higher iteration counts).
+- `Single_electrode(iteration_number, rep_num)` — convenience wrapper used during experiment simulation.
+
+### `SparrowRpcService.py`
+A gRPC client wrapping the Sparrow HD-MEA application's RPC interface. Exposes Python methods for chip configuration, acquisition control, stimulation, data export, and impedance spectroscopy. See `PythonGRpcClient/README.md` for setup details.
+
+### `electrode_select_GUI.py` — `GridSelector`
+A 16×16 Tkinter grid that lets the user toggle individual electrodes or entire rows/columns before confirming a selection. The confirmed list is passed back to the GUI via a callback.
+
+---
+
+## Output Files
+
+Each experiment run creates a timestamped directory (`<ChipID>_<DDMMYYYY>_well<N>`) under both the streaming and storage paths, containing:
+
+| File | Description |
+|---|---|
+| `exp_parameters.txt` | All GUI parameter values at experiment completion |
+| `log.txt` | Full text log of the experiment session |
+| `Baseline_cfg.yaml` | Copy of the baseline config used |
+| `Recording_cfg.yaml` | Copy of the recording/stimulation config used |
+
+---
+
+## Protocol Reference
+
+A detailed LaTeX write-up of the experimental protocol is available in [`Protocol pdf/Protocol.tex`](Protocol%20pdf/Protocol.tex) (PDF: [`Protocol pdf/Protocol.pdf`](Protocol%20pdf/Protocol.pdf)).
+
+---
+
+## References
+
+Shahaf, G., & Marom, S. (2001). Learning in networks of cortical neurons. *Journal of Neuroscience*, 21(22), 8782–8788.
